@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>Lab4_BookShop_ArtifactID</artifactId>
+        <groupId>Lab4_BookShop_GroupID</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ear</artifactId>
+    <groupId>Lab4_BookShop_GroupID</groupId>
+    <packaging>ear</packaging>
+
+    <name />
+    <version>0.0.1-SNAPSHOT</version>
+    <description />
+
+    <dependencies>
+        <dependency>
+            <groupId>Lab4_BookShop_GroupID</groupId>
+            <artifactId>ejb</artifactId>
+            <type>ejb</type>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>Lab4_BookShop_GroupID</groupId>
+            <artifactId>web</artifactId>
+            <type>war</type>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>BookShopArtifactID</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <modules>
+                        <webModule>
+                            <groupId>Lab4_BookShop_GroupID</groupId>
+                            <artifactId>web</artifactId>
+                        </webModule>
+                        <ejbModule>
+                            <groupId>Lab4_BookShop_GroupID</groupId>
+                            <artifactId>ejb</artifactId>
+                        </ejbModule>
+                    </modules>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.oracle.weblogic</groupId>
+                <artifactId>weblogic-maven-plugin</artifactId>
+                <version>12.2.1-0-0</version>
+                <configuration>
+                    <adminurl>t3://localhost:7001</adminurl>
+                    <user>Kostyan221094</user>
+                    <password>Kostyan221094</password>
+                    <name>EARApplication</name>
+                    <remote>true</remote>
+                    <upload>true</upload>
+                    <targets>AdminServer</targets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <source>ear/target/BookShopArtifactID.ear</source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<weblogic-ejb-jar xmlns="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar http://xmlns.oracle.com/weblogic/weblogic-ejb-jar/1.3/weblogic-ejb-jar.xsd ">
+    <weblogic-enterprise-bean>
+        <ejb-name>LocationEJB</ejb-name>
+        <jndi-name>LocationEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>StudentEJB</ejb-name>
+        <jndi-name>StudentEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>CourseEJB</ejb-name>
+        <jndi-name>CourseEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>GradeEJB</ejb-name>
+        <jndi-name>GradeEJB</jndi-name>
+    </weblogic-enterprise-bean>
+</weblogic-ejb-jar>
