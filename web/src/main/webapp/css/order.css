@@ -1,0 +1,18 @@
+table{
+    display: block;
+    text-align:-webkit-center;
+    border-collapse: collapse;
+}
+td{
+    text-align:-webkit-center;
+    padding :10px;
+    padding-right : 10px;
+}
+.admin_order_content{
+    position: absolute;
+    overflow: auto;
+    top: 140px;
+    left: 240px;
+    right: 0;
+    width: 65%;
+}

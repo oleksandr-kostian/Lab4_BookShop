@@ -1,0 +1,40 @@
+
+
+#login { border-radius: 5px; margin: 30px auto; width: 300px; -webkit-perspective: 1000; }
+#login h1 { position: relative; margin: 0; padding: 15px; border: 1px solid rgba(0,0,0,.3); border-radius: 5px 5px 0 0; font-size: 16px; text-align: center; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.2); background-color: #3D9970;; box-shadow: inset 0 1px rgba(255,255,255,.3);
+    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.15)); font-family:Tahoma;
+}
+#login h1:after {	content: ""; position: absolute; width: 100%; bottom: 2px; left: 0; border-bottom: 1px dashed rgba(0,0,0,.5); }
+#login a { color: #888; text-decoration: none; }
+#login a:hover { color: #369; }
+#login p { margin: 0;}
+#login fieldset {	display: block; margin: 0; padding: 20px; background: #fff; border: 1px solid rgba(0,0,0,.3); border-top: 0; border-radius: 0 0 5px 5px; box-shadow: 0 1px 2px #aaa; }
+#login input { width: 238px; margin: 0; padding: 12px 10px; border: 1px solid #ccc; outline: none; font-size: 14px; }
+#login input:focus { background: #fafafa; box-shadow: inset 0 1px 7px #ddd;}
+#login input[type="email"] { border-radius: 3px 3px 0 0; }
+#login input[type="password"] {	border-width: 0 1px; border-radius: 0; }
+#login .form-login input[type="password"] {	border-width: 0 1px 1px 1px;	border-radius: 0 0 3px 3px; }
+#login input[type="text"] {	border-radius: 0 0 3px 3px; }
+#login input[type="submit"] { width: 260px; padding: 12px 20px; margin: 15px 0; border: 1px solid #3D9970; border-radius: 3px; color: white; font-size: 1.3em; font-weight: bold; text-shadow: 1px 1px 1px #3D9970; cursor: pointer;
+    background-color: #3D9970; box-shadow: inset 0 1px 1px #3D9970;;
+}
+#login input[type="submit"]:hover {	background-color: mediumseagreen }
+#login input[type="submit"]:active { padding: 13px 20px 11px; text-shadow: -1px -1px 1px rgba(255,255,255,.6); box-shadow: inset 0 1px 4px rgba(0,0,0,.2); }
+
+/* flip animation */
+.flip { position: relative; -webkit-transition: 0.6s; -webkit-transform-style: preserve-3d; }
+.form-login,
+.form-signup { position: absolute; top: 0; left: 0; -webkit-backface-visibility: hidden; }
+.form-signup { z-index: 2; }
+.form-login { -webkit-transform: rotateY(180deg); }
+.flip.flipped { -webkit-transform: rotateY(-180deg); }
+
+#login input.login-err,
+#login input.login-err:focus { color: #C4550B; background-color: #FFEDD7; border-color: #EB975F; }
+#login input.login-err::-webkit-input-placeholder { color: #C4550B; }
+#login input.login-ok,
+#login input.login-ok:focus { color: #4E831F; background-color: #EBFDDC; border-color: #9FCC41; }
+#login input.login-ok::-webkit-input-placeholder { color: #4E831F; }
+
+#login p.login-msg { display: none; margin: 0 0 5px; font-size: 13px; font-weight: bold; color: #C4550B; }
+
