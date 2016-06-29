@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 		  http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
          version="3.1">
+
     <enterprise-beans>
-        <entity>
-            <display-name>Customer</display-name>
-            <ejb-name>CustomerEJB</ejb-name>
-            <home>com.beans.customer.CustomerHome</home>
-            <remote>com.beans.customer.Customer</remote>
-            <ejb-class>com.beans.customer.CustomerBean</ejb-class>
-            <persistence-type>Bean</persistence-type>
-            <prim-key-class>java.lang.String</prim-key-class>
-            <reentrant>true</reentrant>
-        </entity>
-        <entity>
-            <ejb-name>AuthorEJB</ejb-name>
-            <home>com.beans.author.AuthorHome</home>
-            <remote>com.beans.author.Author</remote>
-            <ejb-class>com.beans.author.AuthorBean</ejb-class>
-            <persistence-type>Bean</persistence-type>
-            <prim-key-class>java.lang.String</prim-key-class>
-            <reentrant>true</reentrant>
-        </entity>
         <entity>
             <ejb-name>OrderEJB</ejb-name>
             <home>com.beans.order.OrderHome</home>
