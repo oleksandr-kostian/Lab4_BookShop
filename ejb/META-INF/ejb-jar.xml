@@ -15,5 +15,15 @@
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>true</reentrant>
         </entity>
+        <entity>
+            <display-name>CustomerEJB</display-name>
+            <ejb-name>CustomerEJB</ejb-name>
+            <home>com.beans.customer.CustomerHome</home>
+            <remote>com.beans.customer.Customer</remote>
+            <ejb-class>com.beans.customer.CustomerBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>true</reentrant>
+        </entity>
     </enterprise-beans>
 </ejb-jar>

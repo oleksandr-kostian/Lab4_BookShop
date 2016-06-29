@@ -22,7 +22,6 @@ public class Order {
         this.customer = customer;
         this.dateOfOrder = dateOfOrder;
         this.content = con;
-
     }
 
     public Order(int id, Customer customer, Date dateOfOrder) {
@@ -30,16 +29,12 @@ public class Order {
         this.idOrder = id;
         this.customer = customer;
         this.dateOfOrder = dateOfOrder;
-
-
     }
 
     public Order(Customer customer, Date dateOfOrder) {
         content = new ArrayList<ContentOrder>();
         this.customer = customer;
         this.dateOfOrder = dateOfOrder;
-
-
     }
 
     public Order() {
@@ -82,6 +77,30 @@ public class Order {
         content.add(con);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || (getClass() != obj.getClass()))
+            return false;
+        Order other = (Order) obj;
+        if ((idOrder != other.idOrder) && (customer != other.customer) && (dateOfOrder != other.dateOfOrder) && (content != other.content))
+            return false;
+        if (this == obj)
+            return true;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        int one = 17;
+        result = one * result + (this.getDateOfOrder() == null ? 0 : this.getDateOfOrder().hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer: " + getCustomer().getLogin() + " Date: " + getDateOfOrder();
+    }
 
     public class ContentOrder {
 
@@ -134,30 +153,5 @@ public class Order {
         public String toString() {
             return "Book: " + getBooks() + " Count: " + getAmount();
         }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if ((obj == null) || (getClass() != obj.getClass()))
-            return false;
-        Order other = (Order) obj;
-        if ((idOrder != other.idOrder) && (customer != other.customer) && (dateOfOrder != other.dateOfOrder) && (content != other.content))
-            return false;
-        if (this == obj)
-            return true;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 1;
-        int one = 17;
-        result = one * result + (this.getDateOfOrder() == null ? 0 : this.getDateOfOrder().hashCode());
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer: " + getCustomer().getLogin() + " Date: " + getDateOfOrder();
     }
 }

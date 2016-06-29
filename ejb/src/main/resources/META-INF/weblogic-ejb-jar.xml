@@ -2,4 +2,16 @@
 <weblogic-ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar"
                   xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar http://xmlns.oracle.com/weblogic/weblogic-ejb-jar/1.3/weblogic-ejb-jar.xsd ">
 
+    <weblogic-enterprise-bean>
+        <ejb-name>OrderEJB</ejb-name>
+        <jndi-name>OrderEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>CustomerEJB</ejb-name>
+        <jndi-name>CustomerEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>ContentOrderEJB</ejb-name>
+        <jndi-name>ContentOrderEJB</jndi-name>
+    </weblogic-enterprise-bean>
 </weblogic-ejb-jar>
