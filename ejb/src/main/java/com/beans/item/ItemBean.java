@@ -148,7 +148,7 @@ public class ItemBean implements EntityBean {
         System.out.println("Item bean was passivated.");
     }
 
-    @Override
+
     public ItemBean getItemById(Integer id, ItemType type) throws FinderException {
         ItemBean newItem = null;
         if(type == ItemType.Rubric){
@@ -158,7 +158,7 @@ public class ItemBean implements EntityBean {
         return item;
     }
 
-    @Override
+
     public ItemBean getSectionById(Integer id) throws FinderException {
         ItemBean section = null;
         Connection connection = DataSourceConnection.getInstance().getConnection();
