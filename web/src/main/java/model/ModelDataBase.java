@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface ModelDataBase {
 
-    Connection getConnection();
-
     void updateBook(Book book)throws DataBaseException;
     void updateAuthor(Author author)throws DataBaseException;
     void updateCustomer(Customer customer)throws DataBaseException;

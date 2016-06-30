@@ -11,7 +11,12 @@ import java.util.Date;
 
 public interface Order extends EJBObject {
     int getIdOrder() throws RemoteException;
+
+    void setIdOrder(int id) throws RemoteException;
+
     Customer getCustomer() throws RemoteException;
+
     Date getDateOfOrder() throws RemoteException;
+
     ArrayList<ContentOrder> getContents() throws RemoteException;
 }

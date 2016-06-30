@@ -5,6 +5,7 @@ import com.connection.DataSourceConnection;
 import com.model.ContentOrder;
 
 import javax.ejb.*;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,6 +52,7 @@ public class OrderBean implements EntityBean {
     public ArrayList<ContentOrder> getContents() {
         return content;
     }
+
 
     public void setContents(ArrayList<ContentOrder> contents) {
         this.content = contents;
@@ -134,44 +136,53 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public Integer ejbCreate() throws CreateException {
-        return null;
+    public Integer ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.prepareStatement("{call  ADDORDER(?,?,?,?)}");
+
+            statement.setInt(1, customer.getId());
+            statement.setInt(2, con.get(0).getBooks().getId());
+            statement.setInt(3, con.get(0).getAmount());
+            statement.setDate(4, (java.sql.Date) dateOfOrder);
+
+            statement.execute();
+            statement = null;
+            result = null;
+
+            statement = connection.prepareStatement("SELECT MAX(ID_ORDER) FROM ORDERS");
+            result= statement.executeQuery();
+            while (result.next()) {
+                int idOr = result.getInt("MAX(ID_ORDER)");
+                this.setIdOrder(idOr);
+                this.setCustomer(customer);
+                this.setDateOfOrder(dateOfOrder);
+                this.setContents(con);
+            }
+            statement = null;
+            for(int i = 1; i <= this.getContents().size() - 1; i++){
+                statement = connection.prepareStatement("INSERT INTO CONTENR_ORDER(ID_ORDER,ID_BOOK,AMOUNT) values(?,?,?)");
+                statement.setInt(1, this.getIdOrder());
+                statement.setInt(2, this.getContents().get(i).getBooks().getId());
+                statement.setInt(3, this.getContents().get(i).getAmount());
+                statement.execute();
+                statement = null;
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Exception for create", e);
+        } catch (RemoteException e) {
+            throw new EJBException("Remote exception for create", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return id;
     }
 
     @Override
-    public void ejbPostCreate() throws CreateException {
-
-    }
-
-    @Override
-    public Integer ejbCreate(Customer customer, Date dateOfOrder) throws CreateException {
-        setCustomer(customer);
-        setDateOfOrder(dateOfOrder);
-        return null;
-    }
-
-    @Override
-    public void ejbPostCreate(Customer customer, Date dateOfOrder) throws CreateException {
-
-    }
-
-    @Override
-    public Integer ejbCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
-        return null;
-    }
-
-    @Override
-    public void ejbPostCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
-
-    }
-
-    @Override
-    public Integer ejbCreate(int id, Customer customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        return null;
-    }
-
-    @Override
-    public void ejbPostCreate(int id, Customer customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
+    public void ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
 
     }
 }
