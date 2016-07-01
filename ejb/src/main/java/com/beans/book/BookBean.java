@@ -1,15 +1,17 @@
 package com.beans.book;
 
+import com.beans.item.ItemBean;
+
 import javax.ejb.*;
 
 /**
- * Created by Veleri on 26.06.2016.
+ * Created by Veleri on 01.07.2016.
  */
-public class BookBean implements EntityBean {
+public class BookBean  extends ItemBean implements EntityBean{
     public BookBean() {
     }
 
-    public String ejbFindByPrimaryKey(String key) throws FinderException {
+    public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
         return null;
     }
 
@@ -34,4 +36,8 @@ public class BookBean implements EntityBean {
     public void ejbStore() throws EJBException {
     }
 
+    @Override
+    public Integer getId() throws FinderException {
+        return null;
+    }
 }
