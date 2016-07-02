@@ -1,11 +1,14 @@
 package model;
 
+import com.beans.author.AuthorHome;
 import com.beans.customer.CustomerHome;
 import com.beans.order.OrderHome;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
 import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -44,7 +47,19 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void updateAuthor(Author author) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("AuthorEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
+        try {
+            home.updateById(author.getId(),author.getSurname(),author.getName());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't update data due to RemoteException", e);
+        }
     }
 
     @Override
@@ -96,7 +111,21 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void createAuthor(Author author) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("AuthorEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
+        try {
+            home.create(author.getSurname(),author.getName());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't insert new data due to RemoteException", e);
+        } catch (CreateException e) {
+            throw new DataBaseException("Can't insert new data due to CreateException", e);
+        }
     }
 
     @Override
@@ -121,7 +150,27 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void removeAuthor(int authorId) throws DataBaseException {
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("AuthorEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
 
+        AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(authorId);
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(authorId);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
@@ -161,7 +210,37 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Author> getAllAuthor() throws DataBaseException {
-        return null;
+        List<Author> lAuthors = new ArrayList<Author>();
+        ArrayList<com.beans.author.Author> lId;
+        com.beans.author.Author authorRemote;
+        Author author;
+        AuthorHome home = null;
+        Context initial = null;
+
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("AuthorEJB");
+            home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+
+        try {
+            lId = (ArrayList<com.beans.author.Author>) home.findAllAuthors();
+            System.out.println("Authors id list: " + lId.size());
+            for (int i = 0; i < lId.size(); i++) {
+                System.out.println("Authors was added with id: " + lId.get(i).getId() + "; Author name by id: " + lId.get(i).getName());
+                authorRemote = home.findByPrimaryKey(lId.get(i).getId());
+                author = new Author(authorRemote.getId(), authorRemote.getSurname(),authorRemote.getName());
+                lAuthors.add(author);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+
+        return lAuthors;
     }
 
     @Override
@@ -211,7 +290,19 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Author getAuthorById(int authorId) throws DataBaseException {
-        return null;
+        com.beans.author.Author authorRemote;
+        Author author;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("AuthorEJB");
+            AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
+            authorRemote = home.findByPrimaryKey(authorId);
+            author = new Author(authorRemote.getId(), authorRemote.getSurname(), authorRemote.getName());
+        } catch (Exception e)
+        {
+            throw new DataBaseException("Can't get author by id", e);
+        }
+        return author;
     }
 
     @Override
