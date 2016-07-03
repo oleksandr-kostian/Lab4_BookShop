@@ -18,9 +18,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 public class OrderBean implements EntityBean {
     private int idOrder;
@@ -98,17 +96,17 @@ public class OrderBean implements EntityBean {
     }
 
     public void setEntityContext(EntityContext entityContext) throws EJBException {
-        System.out.println("Order bean context was set.");
+        System.out.println("OrderRemote bean context was set.");
         this.context = entityContext;
     }
 
     public void unsetEntityContext() throws EJBException {
-        System.out.println("Order bean context was unset.");
+        System.out.println("OrderRemote bean context was unset.");
         this.context = null;
     }
 
     public void ejbRemove() throws RemoveException, EJBException {
-        System.out.println("Order bean method ejbRemove() was called.");
+        System.out.println("OrderRemote bean method ejbRemove() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -134,16 +132,16 @@ public class OrderBean implements EntityBean {
     }
 
     public void ejbActivate() throws EJBException {
-        System.out.println("Order bean was activated.");
+        System.out.println("OrderRemote bean was activated.");
         this.idOrder = (Integer) context.getPrimaryKey();
     }
 
     public void ejbPassivate() throws EJBException {
-        System.out.println("Order bean was passivated.");
+        System.out.println("OrderRemote bean was passivated.");
     }
 
     public void ejbLoad() throws EJBException {
-        System.out.println("Order bean method ejbLoad() was called.");
+        System.out.println("OrderRemote bean method ejbLoad() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -172,6 +170,16 @@ public class OrderBean implements EntityBean {
                     e.printStackTrace();
                 }
 
+                //list of content
+                statement = connection.prepareStatement("SELECT ID_BOOK, AMOUNT FROM CONTENR_ORDER WHERE ID_ORDER=?");
+                statement.setInt(1, this.getIdOrder());
+                result = statement.executeQuery();
+                while (result.next()) {
+                    int idBook = result.getInt("ID_BOOK");
+                    int amount = result.getInt("AMOUNT");
+
+                    this.getContents().add(new ContentOrder(idBook, amount));
+                }
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
@@ -187,7 +195,7 @@ public class OrderBean implements EntityBean {
     }
 
     public void ejbStore() throws EJBException {                              ///???
-        System.out.println("Order bean method ejbStore() was called.");
+        System.out.println("OrderRemote bean method ejbStore() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -209,8 +217,8 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public Integer ejbCreate(Integer id, CustomerRemote Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("Order bean method ejbCreate(Integer id, CustomerRemote CustomerRemote, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+    public Integer ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
+        System.out.println("OrderRemote bean method ejbCreate(Integer id, CustomerRemote Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -258,7 +266,7 @@ public class OrderBean implements EntityBean {
 
     @Override
     public void ejbPostCreate(Integer id, CustomerRemote Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("Order bean method ejbPostCreate(Integer id, CustomerRemote CustomerRemote, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+        System.out.println("OrderRemote bean method ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
     }
 
   /*  @Override
@@ -279,6 +287,29 @@ public class OrderBean implements EntityBean {
     @Override
     public void ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) throws CreateException {
         System.out.println("Order bean method ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) was called.");
-    }
+     }
     */
+
+    public Collection ejbFindAllOrders() throws FinderException {
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+        List<Integer> listOrder = new ArrayList<>();
+
+        try {
+            statement = connection.prepareStatement("SELECT ID_ORDER FROM ORDERS");
+            result = statement.executeQuery();
+            while (result.next()) {
+                this.idOrder = result.getInt("ID_ORDER");
+                listOrder.add(this.idOrder);
+            }
+        } catch (Exception e) {
+            throw new EJBException("Can't get data for all items due to SQLException", e);
+        }
+        finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return listOrder;
+    }
+
 }

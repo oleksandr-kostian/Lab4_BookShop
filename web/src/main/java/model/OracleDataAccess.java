@@ -5,6 +5,7 @@ import com.beans.author.AuthorRemote;
 import com.beans.customer.CustomerHome;
 import com.beans.customer.CustomerRemote;
 import com.beans.order.OrderHome;
+import com.beans.order.OrderRemote;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
@@ -41,8 +42,6 @@ public class OracleDataAccess implements ModelDataBase{
     public void updateBook(Book book) throws DataBaseException {
 
     }
-
-    ///////////////////////////////////
 
     @Override
     public void updateAuthor(Author author) throws DataBaseException {
@@ -123,12 +122,11 @@ public class OracleDataAccess implements ModelDataBase{
         try {
             ArrayList<com.model.ContentOrder> arr = new ArrayList<>();
             for (Order.ContentOrder c : order.getContents()) {
-                com.model.ContentOrder con = new com.model.ContentOrder();
-                con.setBook(c.getBooks().getId(), c.getAmount());
+                com.model.ContentOrder con = new com.model.ContentOrder(c.getBooks().getId(), c.getAmount());
                 arr.add(con);
             }
 
-            home.create(null, customerHome.create(), order.getDateOfOrder(), arr);
+            home.create(null, customerHome.create(customerHome), order.getDateOfOrder(), arr);
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -359,7 +357,36 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getAllOrder() throws DataBaseException {
-        return null;
+        ArrayList<model.Order> list_orders = new ArrayList<>();
+
+        ArrayList<OrderRemote> lId;
+        OrderHome home;
+        Context initial;
+
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("OrderEJB");
+            home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+
+        try {
+            lId = (ArrayList<OrderRemote>) home.findAllOrders();
+            System.out.println("OrderRemote size list: " + lId.size());
+
+            for (int i = 0; i < lId.size(); i++) {
+                System.out.println("OrderRemote was added with id: " + lId.get(i).getIdOrder());
+                list_orders.add(getOrderById(lId.get(i).getIdOrder()));
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+
+        return list_orders;
+
     }
 
     @Override
@@ -411,7 +438,27 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Order getOrderById(int orderId) throws DataBaseException {
-        return null;
+        OrderRemote orderRemote;
+        Order order;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("OrderEJB");
+            OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+            orderRemote = home.findByPrimaryKey(orderId);
+
+            order = new Order(orderRemote.getIdOrder(),
+                    getCustomerById(orderRemote.getCustomer().getId()),
+                    orderRemote.getDateOfOrder());
+
+            for (com.model.ContentOrder c: orderRemote.getContents()) {
+                Order.ContentOrder con = order.new ContentOrder();
+                con.setBook(getBookById(c.getIDBook()), c.getAmount());
+                order.getContents().add(con);
+            }
+        } catch (Exception e) {
+            throw new DataBaseException("Can't get author by id", e);
+        }
+        return order;
     }
 
     @Override

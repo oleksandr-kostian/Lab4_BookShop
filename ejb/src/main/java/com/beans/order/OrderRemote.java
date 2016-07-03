@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public interface Order extends EJBObject {
+public interface OrderRemote extends EJBObject {
     int getIdOrder() throws RemoteException;
     void setIdOrder(int id) throws RemoteException;
     CustomerRemote getCustomer() throws RemoteException;
