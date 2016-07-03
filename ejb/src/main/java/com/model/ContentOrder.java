@@ -1,28 +1,25 @@
 package com.model;
 
-
-import com.beans.book.Book;
-
 public class ContentOrder {
 
-    private Book book;
-    private int amount;
+    private Integer idBook;
+    private Integer amount;
 
-    public Book getBooks() {
-        return book;
+    public int getIDBook() {
+        return idBook;
     }
 
     public int getAmount() {
         return amount;
     }
 
-    public void setBook(Book book, int count) {
-        this.book = book;
-        this.amount = count;
+    public void setBook(Integer idBook, Integer amount) {
+        this.idBook = idBook;
+        this.amount = amount;
     }
 
     public void removeBook() {
-        this.book = null;
-        this.amount = 0;
+        this.idBook = null;
+        this.amount = null;
     }
 }

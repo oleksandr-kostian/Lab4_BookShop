@@ -6,6 +6,8 @@ import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
 import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -79,9 +81,16 @@ public class OracleDataAccess implements ModelDataBase{
             throw new DataBaseException("Can't insert new data", e);
         }
         OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
-        CustomerHome customerHome = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+        CustomerHome customerHome = (CustomerHome) PortableRemoteObject.narrow(objref_Cus, CustomerHome.class);
         try {
-            home.create(null, customerHome, order.getDateOfOrder(), order.getContents());
+            ArrayList<com.model.ContentOrder> arr = new ArrayList<>();
+            for (Order.ContentOrder c : order.getContents()) {
+                com.model.ContentOrder con = new com.model.ContentOrder();
+                con.setBook(c.getBooks().getId(), c.getAmount());
+                arr.add(con);
+            }
+
+            home.create(null, customerHome.create(), order.getDateOfOrder(), arr);
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -126,7 +135,27 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void removeOrder(Order order) throws DataBaseException {
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("OrderEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
 
+        OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(order.getIdOrder());
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(order.getIdOrder());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
@@ -166,7 +195,10 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getAllOrder() throws DataBaseException {
-        return null;
+
+
+
+return null;
     }
 
     @Override

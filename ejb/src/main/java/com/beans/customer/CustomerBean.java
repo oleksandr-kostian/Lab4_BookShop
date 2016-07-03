@@ -34,4 +34,18 @@ public class CustomerBean implements EntityBean {
     public void ejbStore() throws EJBException {
     }
 
+    @Override
+    public Integer getId() {
+        return null;
+    }
+
+    @Override
+    public Integer ejbCreate() throws CreateException {
+        return null;
+    }
+
+    @Override
+    public void ejbPostCreate() throws CreateException {
+
+    }
 }

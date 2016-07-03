@@ -20,11 +20,6 @@ public class ItemBean implements EntityBean {
 
     private EntityContext context;
 
-    public enum ItemType {
-        Rubric,
-        Book,
-        Section;
-    }
     public ItemBean(int id, String name, String des, ItemBean par, ItemType itemType) {
         this.idItem = id;
         this.name = name;
@@ -32,21 +27,19 @@ public class ItemBean implements EntityBean {
         this.parent = par;
         this.type = itemType;
     }
-
     public ItemBean(String name, String des, ItemBean par, ItemType itemType) {
         this.name = name;
         this.description = des;
         this.parent = par;
         this.type = itemType;
     }
+
     public ItemBean() {
     }
-
 
     public EntityContext getContext() {
         return context;
     }
-
 
     public int getIdItem() {
         return idItem;
@@ -148,7 +141,6 @@ public class ItemBean implements EntityBean {
         System.out.println("Item bean was passivated.");
     }
 
-
     public ItemBean getItemById(Integer id, ItemType type) throws FinderException {
         ItemBean newItem = null;
         if(type == ItemType.Rubric){
@@ -157,7 +149,6 @@ public class ItemBean implements EntityBean {
         ItemBean item = new ItemBean(id, name, description, newItem, type);
         return item;
     }
-
 
     public ItemBean getSectionById(Integer id) throws FinderException {
         ItemBean section = null;
@@ -180,7 +171,6 @@ public class ItemBean implements EntityBean {
         return section;
     }
 
-
     private ItemType getItemTypeByNumber(int number) {
         ItemType type=null;
         switch (number) {
@@ -197,6 +187,7 @@ public class ItemBean implements EntityBean {
         return type;
 
     }
+
     private ItemBean getItem(ResultSet result, ItemType type){
         ItemBean item=null;
         try {
@@ -217,6 +208,7 @@ public class ItemBean implements EntityBean {
         return item;
 
     }
+
     public void ejbLoad() throws EJBException {
         System.out.println("Item bean method ejbLoad() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -262,6 +254,12 @@ public class ItemBean implements EntityBean {
         finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
+    }
+
+    public enum ItemType {
+        Rubric,
+        Book,
+        Section;
     }
 
 
