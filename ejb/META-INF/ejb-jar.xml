@@ -9,7 +9,7 @@
         <entity>
             <ejb-name>OrderEJB</ejb-name>
             <home>com.beans.order.OrderHome</home>
-            <remote>com.beans.order.Order</remote>
+            <remote>com.beans.order.OrderRemote</remote>
             <ejb-class>com.beans.order.OrderBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>

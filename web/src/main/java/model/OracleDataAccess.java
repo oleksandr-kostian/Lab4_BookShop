@@ -3,6 +3,7 @@ package model;
 import com.beans.author.AuthorHome;
 import com.beans.customer.CustomerHome;
 import com.beans.order.OrderHome;
+import com.beans.order.OrderRemote;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
@@ -39,8 +40,6 @@ public class OracleDataAccess implements ModelDataBase{
     public void updateBook(Book book) throws DataBaseException {
 
     }
-
-    ///////////////////////////////////
 
     @Override
     public void updateAuthor(Author author) throws DataBaseException {
@@ -125,7 +124,7 @@ public class OracleDataAccess implements ModelDataBase{
                 arr.add(con);
             }
 
-            home.create(null, customerHome.create(), order.getDateOfOrder(), arr);
+            home.create(null, customerHome.create(customerHome), order.getDateOfOrder(), arr);
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -358,7 +357,7 @@ public class OracleDataAccess implements ModelDataBase{
     public List<Order> getAllOrder() throws DataBaseException {
         ArrayList<model.Order> list_orders = new ArrayList<>();
 
-        ArrayList<com.beans.order.Order> lId;
+        ArrayList<OrderRemote> lId;
         OrderHome home;
         Context initial;
 
@@ -371,11 +370,11 @@ public class OracleDataAccess implements ModelDataBase{
         }
 
         try {
-            lId = (ArrayList<com.beans.order.Order>) home.findAllOrders();
-            System.out.println("Order size list: " + lId.size());
+            lId = (ArrayList<OrderRemote>) home.findAllOrders();
+            System.out.println("OrderRemote size list: " + lId.size());
 
             for (int i = 0; i < lId.size(); i++) {
-                System.out.println("Order was added with id: " + lId.get(i).getIdOrder());
+                System.out.println("OrderRemote was added with id: " + lId.get(i).getIdOrder());
                 list_orders.add(getOrderById(lId.get(i).getIdOrder()));
             }
         } catch (RemoteException e) {
@@ -437,7 +436,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Order getOrderById(int orderId) throws DataBaseException {
-        com.beans.order.Order orderRemote;
+        OrderRemote orderRemote;
         Order order;
         try {
             Context initial = new InitialContext();

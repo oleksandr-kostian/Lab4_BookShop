@@ -13,12 +13,12 @@ import java.util.Date;
 
 
 public interface OrderHome extends EJBHome {
-    com.beans.order.Order create (Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws RemoteException, CreateException;
+    OrderRemote create (Integer id, CustomerRemote customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws RemoteException, CreateException;
 
-   /* com.beans.order.Order create (int id, Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
-    com.beans.order.Order create (Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
-    //com.beans.order.Order create () throws RemoteException, CreateException;  ??? или пустой конструктор?*/
+   /* com.beans.order.OrderRemote create (int id, Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
+    com.beans.order.OrderRemote create (Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
+    //com.beans.order.OrderRemote create () throws RemoteException, CreateException;  ??? или пустой конструктор?*/
 
-    com.beans.order.Order findByPrimaryKey(Integer key) throws RemoteException, FinderException; //?бин или число?
+    OrderRemote findByPrimaryKey(Integer key) throws RemoteException, FinderException; //?бин или число?
     Collection findAllOrders() throws FinderException, RemoteException;
 }
