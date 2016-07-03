@@ -8,6 +8,7 @@ import javax.ejb.EJBHome;
 import javax.ejb.FinderException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -18,5 +19,6 @@ public interface OrderHome extends EJBHome {
     com.beans.order.Order create (Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
     //com.beans.order.Order create () throws RemoteException, CreateException;  ??? или пустой конструктор?*/
 
-    com.beans.order.Order findByPrimaryKey(Integer key) throws RemoteException, FinderException;
+    com.beans.order.Order findByPrimaryKey(Integer key) throws RemoteException, FinderException; //?бин или число?
+    Collection findAllOrders() throws FinderException, RemoteException;
 }

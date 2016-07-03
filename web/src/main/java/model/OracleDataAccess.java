@@ -13,11 +13,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-import javax.sql.DataSource;
 import java.rmi.RemoteException;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -42,8 +39,6 @@ public class OracleDataAccess implements ModelDataBase{
     public void updateBook(Book book) throws DataBaseException {
 
     }
-
-    ///////////////////////////////////
 
     @Override
     public void updateAuthor(Author author) throws DataBaseException {
@@ -98,8 +93,7 @@ public class OracleDataAccess implements ModelDataBase{
         try {
             ArrayList<com.model.ContentOrder> arr = new ArrayList<>();
             for (Order.ContentOrder c : order.getContents()) {
-                com.model.ContentOrder con = new com.model.ContentOrder();
-                con.setBook(c.getBooks().getId(), c.getAmount());
+                com.model.ContentOrder con = new com.model.ContentOrder(c.getBooks().getId(), c.getAmount());
                 arr.add(con);
             }
 
@@ -272,10 +266,36 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getAllOrder() throws DataBaseException {
+        ArrayList<model.Order> list_orders = new ArrayList<>();
 
+        ArrayList<com.beans.order.Order> lId;
+        OrderHome home;
+        Context initial;
 
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("OrderEJB");
+            home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
 
-return null;
+        try {
+            lId = (ArrayList<com.beans.order.Order>) home.findAllOrders();
+            System.out.println("Order size list: " + lId.size());
+
+            for (int i = 0; i < lId.size(); i++) {
+                System.out.println("Order was added with id: " + lId.get(i).getIdOrder());
+                list_orders.add(getOrderById(lId.get(i).getIdOrder()));
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+
+        return list_orders;
+
     }
 
     @Override
@@ -315,7 +335,27 @@ return null;
 
     @Override
     public Order getOrderById(int orderId) throws DataBaseException {
-        return null;
+        com.beans.order.Order orderRemote;
+        Order order;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("OrderEJB");
+            OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+            orderRemote = home.findByPrimaryKey(orderId);
+
+            order = new Order(orderRemote.getIdOrder(),
+                    getCustomerById(orderRemote.getCustomer().getId()),
+                    orderRemote.getDateOfOrder());
+
+            for (com.model.ContentOrder c: orderRemote.getContents()) {
+                Order.ContentOrder con = order.new ContentOrder();
+                con.setBook(getBookById(c.getIDBook()), c.getAmount());
+                order.getContents().add(con);
+            }
+        } catch (Exception e) {
+            throw new DataBaseException("Can't get author by id", e);
+        }
+        return order;
     }
 
     @Override
