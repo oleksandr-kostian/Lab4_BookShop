@@ -3,6 +3,7 @@ package com.beans.item;
 import com.connection.DataSourceConnection;
 
 import javax.ejb.*;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,26 +13,21 @@ import java.sql.SQLException;
  * Created by Veleri on 30.06.2016.
  */
 public class ItemBean implements EntityBean {
-    private int idItem;
+
+    private Integer idItem;
     private String name;
     private String description;
     private ItemType type;
-    private ItemBean parent;
+    private int parentId;
+
+    private String selectItemByType;
 
     private EntityContext context;
 
-    public ItemBean(int id, String name, String des, ItemBean par, ItemType itemType) {
-        this.idItem = id;
-        this.name = name;
-        this.description = des;
-        this.parent = par;
-        this.type = itemType;
-    }
-    public ItemBean(String name, String des, ItemBean par, ItemType itemType) {
-        this.name = name;
-        this.description = des;
-        this.parent = par;
-        this.type = itemType;
+    public enum ItemType {
+        Rubric,
+        Book,
+        Section;
     }
 
     public ItemBean() {
@@ -45,63 +41,109 @@ public class ItemBean implements EntityBean {
         return idItem;
     }
 
-    public void setIdItem(int idItem) {
-        this.idItem = idItem;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setIdItem(Integer idItem) {
+        this.idItem = idItem;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public ItemType getType() {
-        return type;
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     public void setType(ItemType type) {
         this.type = type;
     }
 
-    public ItemBean getParent() {
-        return parent;
+
+    public String getDescription() {
+        return description;
     }
 
-    public void setParent(ItemBean parent) {
-        this.parent = parent;
+    public ItemType getType() {
+        return type;
     }
 
-    public Integer ejbFindByPrimaryKey(Integer  key) throws FinderException {
+    public int getParent() {
+        return parentId;
+    }
+
+    private void setSelectItemByType(String query) {
+        this.selectItemByType = query;
+    }
+
+    public String getSelectItemByType() {
+        return selectItemByType;
+    }
+
+    private void setSelectTypeOfItem(ItemType type) {
+        int key = -1;
+        switch (type) {
+            case Book:
+                key = 0;
+                break;
+            case Rubric:
+                key = 1;
+                break;
+            case Section:
+                key = 2;
+                break;
+        }
+        if (key != -1) {
+            setSelectItemByType("SELECT * FROM ITEM WHERE ID_ITEM = ? AND TYPE =" + Integer.toString(key));
+        }
+    }
+
+    private ItemType getTypeForKeyItem(Integer type) {
+        ItemType item = null;
+        switch (type) {
+            case 0:
+                item = ItemType.Book;
+                break;
+            case 1:
+                item = ItemType.Rubric;
+                break;
+            case 2:
+                item = ItemType.Section;
+                break;
+        }
+        return item;
+    }
+
+    private Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
         System.out.println("ItemRemote bean method ejbFindByPrimaryKey() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT * FROM ITEM WHERE ID_ITEM = ?");
+            statement = connection.prepareStatement(getSelectItemByType());
             statement.setInt(1, key);
             result = statement.executeQuery();
-            if(result.next()) {
+            if (result.next()) {
                 return key;
-            }
-            else {
+            } else {
                 throw new EJBException("Can't load data by id. SQLException");
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data by id. SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
+    }
+
+    public Integer ejbFindByPrimaryKeyForType(Integer key, ItemType type) throws FinderException {
+        setSelectTypeOfItem(type);
+        return ejbFindByPrimaryKey(key);
     }
 
     public void setEntityContext(EntityContext entityContext) throws EJBException {
@@ -126,8 +168,7 @@ public class ItemBean implements EntityBean {
             statement.execute();
         } catch (SQLException e) {
             throw new EJBException("Can't delete data due to SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
     }
@@ -141,74 +182,6 @@ public class ItemBean implements EntityBean {
         System.out.println("ItemRemote bean was passivated.");
     }
 
-    public ItemBean getItemById(Integer id, ItemType type) throws FinderException {
-        ItemBean newItem = null;
-        if(type == ItemType.Rubric){
-            newItem =  getSectionById(id);
-        }
-        ItemBean item = new ItemBean(id, name, description, newItem, type);
-        return item;
-    }
-
-    public ItemBean getSectionById(Integer id) throws FinderException {
-        ItemBean section = null;
-        Connection connection = DataSourceConnection.getInstance().getConnection();
-        ResultSet result = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("SELECT * FROM ITEM WHERE ID_ITEM = ? AND TYPE=2");
-            statement.setInt(1, id);
-            result = statement.executeQuery();
-            if(result.next()) {
-                section = getItem(result,ItemType.Section);
-            }
-        } catch (SQLException e) {
-            throw new EJBException("Can't load data due to SQLException", e);
-        }
-        finally {
-            DataSourceConnection.getInstance().disconnect(connection, result, statement);
-        }
-        return section;
-    }
-
-    private ItemType getItemTypeByNumber(int number) {
-        ItemType type=null;
-        switch (number) {
-            case 0:
-                type= ItemType.Book;
-                break;
-            case 1:
-                type = ItemType.Rubric;
-                break;
-            case 2:
-                type = ItemType.Section;
-                break;
-        }
-        return type;
-
-    }
-
-    private ItemBean getItem(ResultSet result, ItemType type){
-        ItemBean item=null;
-        try {
-            int id  = result.getInt("ID_ITEM");
-            String name = result.getString("NAME");
-            int parentId = result.getInt("PARENT_ID");
-            try {
-              ItemBean parent = getItemById(parentId, getType());
-            } catch (FinderException e) {
-                throw new EJBException("Can't load data due to FinderException", e);
-            }
-            this.description = result.getString("DESCRIPTION");
-            item = new ItemBean(id, name, description, parent, type);
-        }
-        catch (SQLException e) {
-           // throw new DataBaseException("Exception with data from result set", e);
-        }
-        return item;
-
-    }
-
     public void ejbLoad() throws EJBException {
         System.out.println("ItemRemote bean method ejbLoad() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -219,19 +192,17 @@ public class ItemBean implements EntityBean {
             statement = connection.prepareStatement("SELECT * FROM ITEM WHERE ID_ITEM = ?");
             statement.setInt(1, this.idItem);
             result = statement.executeQuery();
-            if(result.next()) {
+            if (result.next()) {
                 int typeInt = result.getInt("TYPE");
-                this.type=getItemTypeByNumber(typeInt);
-                ItemBean newItem = getItem(result,getType());
-                this.idItem=newItem.getIdItem();
-                this.name=newItem.getName();
-                this.description=newItem.getDescription();
-                this.parent=newItem.getParent();
+                this.type = getTypeForKeyItem(typeInt);
+                this.idItem = result.getInt("ID_ITEM");
+                this.name = result.getString("NAME");
+                this.description = result.getString("DESCRIPTION");
+                this.parentId = result.getInt("PARENT_ID");
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
     }
@@ -243,24 +214,15 @@ public class ItemBean implements EntityBean {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
-            statement.setInt(1, getParent().getIdItem());
+            statement.setInt(1, getParent());
             statement.setString(2, getName());
             statement.setString(3, getDescription());
             statement.setInt(4, getIdItem());
             statement.executeUpdate();
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             throw new EJBException("Can't store data due to exception", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
     }
-
-    public enum ItemType {
-        Rubric,
-        Book,
-        Section;
-    }
-
-
 }

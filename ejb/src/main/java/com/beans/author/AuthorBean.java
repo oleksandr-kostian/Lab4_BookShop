@@ -3,6 +3,7 @@ package com.beans.author;
 import com.connection.DataSourceConnection;
 
 import javax.ejb.*;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,6 +26,10 @@ public class AuthorBean implements EntityBean {
     private EntityContext context;
 
     public AuthorBean() {
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {

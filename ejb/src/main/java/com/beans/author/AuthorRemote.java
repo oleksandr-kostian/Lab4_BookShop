@@ -16,4 +16,6 @@ public interface AuthorRemote extends EJBObject {
     String getName() throws RemoteException;
 
     EntityContext getContext() throws RemoteException;
+
+    void setId(int id)throws RemoteException;
 }
