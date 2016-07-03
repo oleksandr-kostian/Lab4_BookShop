@@ -7,6 +7,6 @@ import java.rmi.RemoteException;
 /**
  * Created by Veleri on 01.07.2016.
  */
-public interface Book extends EJBObject {
+public interface BookRemote extends EJBObject {
     Integer getId()  throws RemoteException, FinderException;
 }

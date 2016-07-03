@@ -8,5 +8,5 @@ import java.rmi.RemoteException;
  * Created by Veleri on 01.07.2016.
  */
 public interface BookHome extends EJBHome {
-    com.beans.book.Book findByPrimaryKey(Integer key) throws RemoteException, FinderException;
+    BookRemote findByPrimaryKey(Integer key) throws RemoteException, FinderException;
 }
