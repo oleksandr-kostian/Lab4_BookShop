@@ -8,6 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static java.lang.Math.toIntExact;
 
 /**
  * Created by Veleri on 30.06.2016.
@@ -86,7 +91,7 @@ public class ItemBean implements EntityBean {
         return selectItemByType;
     }
 
-    private void setSelectTypeOfItem(ItemType type) {
+    private Integer setSelectTypeOfItem(ItemType type) {
         int key = -1;
         switch (type) {
             case Book:
@@ -102,6 +107,7 @@ public class ItemBean implements EntityBean {
         if (key != -1) {
             setSelectItemByType("SELECT * FROM ITEM WHERE ID_ITEM = ? AND TYPE =" + Integer.toString(key));
         }
+        return key;
     }
 
     private ItemType getTypeForKeyItem(Integer type) {
@@ -163,7 +169,7 @@ public class ItemBean implements EntityBean {
         PreparedStatement statement = null;
         this.idItem = (Integer) context.getPrimaryKey();
         try {
-            statement = connection.prepareStatement("DELETE FROM ITEM WHERE ID_ITEM = ?");
+            statement = connection.prepareStatement("DELETE FROM ITEM WHERE ID_ITEM = ? AND TYPE = " + Integer.valueOf(setSelectTypeOfItem(getType())));
             statement.setInt(1, this.idItem);
             statement.execute();
         } catch (SQLException e) {
@@ -224,5 +230,121 @@ public class ItemBean implements EntityBean {
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
+    }
+
+    @Override
+    public Integer ejbCreateItem(String name, String description, int parentId, ItemType type) throws CreateException {
+        long k;
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+        String sqlQuery = null;
+        switch (type) {
+            case Rubric:
+                sqlQuery = "INSERT INTO ITEM(NAME,PARENT_ID,DESCRIPTION,TYPE) values(?,?,?,1)";
+                break;
+            case Section:
+                sqlQuery = "INSERT INTO ITEM(NAME,PARENT_ID,DESCRIPTION,TYPE) values(?,null,?,2)";
+                break;
+        }
+        try {
+            statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, name);
+            if (type.equals(ItemType.Rubric)) {
+                statement.setInt(2, parentId);
+            }
+            statement.setString(3, description);
+            statement.execute();
+            result = statement.getGeneratedKeys();
+            System.out.println("Auto Generated Primary Key 1: " + result.toString());
+            if (result.next()) {
+                k = result.getLong(1);
+                System.out.println("Auto Generated Primary Key " + k);
+                this.setIdItem(toIntExact(k));
+                this.setName(name);
+                this.setDescription(description);
+                if (type.equals(ItemType.Rubric)) {
+                    this.setType(ItemType.Rubric);
+                } else {
+                    this.setType(ItemType.Section);
+                }
+
+                System.out.println("Auto Generated Primary Key int " + getIdItem());
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Can't create new data due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return getIdItem();
+    }
+
+    @Override
+    public void ejbPostCreateItem(String name, String description, int parentId, ItemType type) throws CreateException {
+
+    }
+
+    @Override
+    public Collection ejbFindAllRubirc() throws FinderException {
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+        List<Integer> lRubric = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT * FROM ITEM WHERE TYPE = 1");
+            result = statement.executeQuery();
+            while (result.next()) {
+                this.idItem = result.getInt("ID_ITEM");
+                lRubric.add(this.getIdItem());
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Can't get data for all items due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return lRubric;
+    }
+
+    @Override
+    public Collection ejbFindAllSections() throws FinderException {
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+        List<Integer> lRubric = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT * FROM ITEM WHERE TYPE = 2");
+            result = statement.executeQuery();
+            while (result.next()) {
+                this.idItem = result.getInt("ID_ITEM");
+                lRubric.add(this.getIdItem());
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Can't get data for all items due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return lRubric;
+    }
+
+    @Override
+    public Collection ejbFindAllRubricBySection(Integer id) throws FinderException {
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+        List<Integer> lRubric = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT * FROM ITEM WHERE TYPE =1 AND ITEM.PARENT_ID=?");
+            statement.setInt(1, id);
+            result = statement.executeQuery();
+            while (result.next()) {
+                this.idItem = result.getInt("ID_ITEM");
+                lRubric.add(this.getIdItem());
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Can't get data for all items due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+        return lRubric;
     }
 }

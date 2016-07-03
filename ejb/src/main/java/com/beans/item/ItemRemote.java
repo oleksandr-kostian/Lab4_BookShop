@@ -17,6 +17,6 @@ public interface ItemRemote extends EJBObject {
 
     ItemBean.ItemType getType() throws RemoteException, FinderException;
 
-    Integer getParentbyId(Integer id) throws RemoteException, FinderException;
+    Integer getParentId() throws RemoteException, FinderException;
 
 }

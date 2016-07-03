@@ -1,6 +1,8 @@
 package com.beans.book;
 
 import com.beans.author.AuthorRemote;
+import com.beans.item.ItemBean;
+import com.beans.item.ItemRemote;
 
 import javax.ejb.EJBObject;
 import javax.ejb.FinderException;
@@ -13,11 +15,23 @@ public interface BookRemote extends EJBObject {
 
     //  Integer getId()  throws RemoteException, FinderException;
 
-    public int getAmount() throws RemoteException, FinderException;
+    int getAmount() throws RemoteException, FinderException;
 
-    public int getPrice() throws RemoteException, FinderException;
+    int getPrice() throws RemoteException, FinderException;
 
-    public int getPages() throws RemoteException, FinderException;
+    int getPages() throws RemoteException, FinderException;
 
-    public AuthorRemote getAuthor() throws RemoteException, FinderException;
+    AuthorRemote getAuthor() throws RemoteException, FinderException;
+
+    Integer getIdItem() throws RemoteException, FinderException;
+
+    String getName() throws RemoteException, FinderException;
+
+    String getDescription() throws RemoteException, FinderException;
+
+    ItemBean.ItemType getType() throws RemoteException, FinderException;
+
+    Integer getParentId() throws RemoteException, FinderException;
+
+
 }

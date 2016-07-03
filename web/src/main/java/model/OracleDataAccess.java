@@ -2,8 +2,13 @@ package model;
 
 import com.beans.author.AuthorHome;
 import com.beans.author.AuthorRemote;
+import com.beans.book.BookHome;
+import com.beans.book.BookRemote;
 import com.beans.customer.CustomerHome;
 import com.beans.customer.CustomerRemote;
+import com.beans.item.ItemBean;
+import com.beans.item.ItemHome;
+import com.beans.item.ItemRemote;
 import com.beans.order.OrderHome;
 import com.beans.order.OrderRemote;
 import com.model.ContentOrdersForCust;
@@ -34,11 +39,15 @@ import java.util.List;
  * @version %I%, %G%
  */
 
-public class OracleDataAccess implements ModelDataBase{
+public class OracleDataAccess implements ModelDataBase {
 
     private static final Logger LOG = Logger.getLogger(OracleDataAccess.class);
 
-    private OracleDataAccess(){
+    private OracleDataAccess() {
+    }
+
+    protected static class Singleton {
+        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
     }
 
     public static OracleDataAccess getInstance() {
@@ -47,7 +56,19 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void updateBook(Book book) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("BookEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        try {
+            home.updateById(book.getId(), book.getName(), book.getAuthor().getId(), book.getDescription(), book.getParent().getId(), book.getPages(), book.getPrice(), book.getAmount());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't update data due to RemoteException", e);
+        }
     }
 
     @Override
@@ -61,7 +82,7 @@ public class OracleDataAccess implements ModelDataBase{
         }
         AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
         try {
-            home.updateById(author.getId(),author.getSurname(),author.getName());
+            home.updateById(author.getId(), author.getSurname(), author.getName());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't update data due to RemoteException", e);
         }
@@ -78,7 +99,7 @@ public class OracleDataAccess implements ModelDataBase{
         }
         CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
         try {
-            home.updateById(customer.getId(),customer.getLogin(),customer.getPassword(),customer.getMail(),customer.getPhone(),customer.getRole());
+            home.updateById(customer.getId(), customer.getLogin(), customer.getPassword(), customer.getMail(), customer.getPhone(), customer.getRole());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't update data due to RemoteException", e);
         }
@@ -114,7 +135,7 @@ public class OracleDataAccess implements ModelDataBase{
         }
         CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
         try {
-            home.create(customer.getLogin(),customer.getPassword(),customer.getMail(),customer.getPhone(),customer.getRole());
+            home.create(customer.getLogin(), customer.getPassword(), customer.getMail(), customer.getPhone(), customer.getRole());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -130,12 +151,12 @@ public class OracleDataAccess implements ModelDataBase{
         try {
             Context initial = new InitialContext();
             objref_order = initial.lookup("OrderEJB");
-            objref_Cus   = initial.lookup("CustomerEJB");
+            objref_Cus = initial.lookup("CustomerEJB");
         } catch (NamingException e) {
             throw new DataBaseException("Can't insert new data", e);
         }
 
-        OrderHome    orderHome    = (OrderHome)    PortableRemoteObject.narrow(objref_order, OrderHome.class);
+        OrderHome orderHome = (OrderHome) PortableRemoteObject.narrow(objref_order, OrderHome.class);
         CustomerHome customerHome = (CustomerHome) PortableRemoteObject.narrow(objref_Cus, CustomerHome.class);
 
         try {
@@ -157,7 +178,21 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void createBook(Book book) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("BookEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        try {
+            home.createBook(book.getName(), book.getDescription(), book.getParent().getId(), book.getAuthor().getId(), book.getPages(), book.getPrice(), book.getAmount());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't insert new data due to RemoteException", e);
+        } catch (CreateException e) {
+            throw new DataBaseException("Can't insert new data due to CreateException", e);
+        }
     }
 
     @Override
@@ -171,7 +206,7 @@ public class OracleDataAccess implements ModelDataBase{
         }
         AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
         try {
-            home.create(author.getSurname(),author.getName());
+            home.create(author.getSurname(), author.getName());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -181,17 +216,64 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void createRubric(Item rubric) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("ItemEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        try {
+            home.createItem(rubric.getName(), rubric.getDescription(), rubric.getParent().getId(), ItemBean.ItemType.Rubric);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't insert new data due to RemoteException", e);
+        } catch (CreateException e) {
+            throw new DataBaseException("Can't insert new data due to CreateException", e);
+        }
     }
 
     @Override
     public void createSection(Item section) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("ItemEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        try {
+            home.createItem(section.getName(), section.getDescription(), section.getParent().getId(), ItemBean.ItemType.Section);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't insert new data due to RemoteException", e);
+        } catch (CreateException e) {
+            throw new DataBaseException("Can't insert new data due to CreateException", e);
+        }
     }
 
     @Override
     public void removeBook(int bookId) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("BookEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(bookId);
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(bookId);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
@@ -271,12 +353,52 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void removeRubric(int rubricId) throws DataBaseException {
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("ItemEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
 
+        ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(rubricId);
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(rubricId);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
     public void removeSection(int sectionId) throws DataBaseException {
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("ItemEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
 
+        ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(sectionId);
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(sectionId);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
@@ -302,7 +424,7 @@ public class OracleDataAccess implements ModelDataBase{
             for (int i = 0; i < lId.size(); i++) {
                 System.out.println("Customers was added with id: " + lId.get(i).getId() + "; CustomerRemote login by id: " + lId.get(i).getLogin());
                 customerRemote = home.findByPrimaryKey(lId.get(i).getId());
-                customer = new Customer(customerRemote.getId(), customerRemote.getLogin(),customerRemote.getPassword(),customerRemote.geteMail(),customerRemote.getPhone(),customerRemote.getRole());
+                customer = new Customer(customerRemote.getId(), customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
                 lCustomers.add(customer);
             }
         } catch (RemoteException e) {
@@ -322,10 +444,9 @@ public class OracleDataAccess implements ModelDataBase{
             Context initial = new InitialContext();
             Object objref = initial.lookup("CustomerEJB");
             CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
-            customerRemote = home.findByName(login,password);
-            customer = new Customer(customerRemote.getId(),customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
-        } catch (Exception e)
-        {
+            customerRemote = home.findByName(login, password);
+            customer = new Customer(customerRemote.getId(), customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
+        } catch (Exception e) {
             throw new DataBaseException("Can't get customer by id", e);
         }
         return customer;
@@ -354,7 +475,7 @@ public class OracleDataAccess implements ModelDataBase{
             for (int i = 0; i < lId.size(); i++) {
                 System.out.println("Authors was added with id: " + lId.get(i).getId() + "; AuthorRemote name by id: " + lId.get(i).getName());
                 authorRemote = home.findByPrimaryKey(lId.get(i).getId());
-                author = new Author(authorRemote.getId(), authorRemote.getSurname(),authorRemote.getName());
+                author = new Author(authorRemote.getId(), authorRemote.getSurname(), authorRemote.getName());
                 lAuthors.add(author);
             }
         } catch (RemoteException e) {
@@ -401,27 +522,146 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Item> getAllRubric() throws DataBaseException {
-        return null;
+        List<Item> lItems = new ArrayList<>();
+        ArrayList<ItemRemote> lId;
+        ItemRemote itemRemote;
+        Item item;
+        ItemHome home = null;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+
+        try {
+            lId = (ArrayList<ItemRemote>) home.findAllRubirc();
+            for (int i = 0; i < lId.size(); i++) {
+                itemRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                Item parent = getSectionById(itemRemote.getParentId());
+                item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), parent, Item.ItemType.Rubric);
+                lItems.add(item);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+        return lItems;
     }
 
     @Override
     public List<Item> getAllSection() throws DataBaseException {
-        return null;
+        List<Item> lItems = new ArrayList<>();
+        ArrayList<ItemRemote> lId;
+        ItemRemote itemRemote;
+        Item item;
+        ItemHome home = null;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+        try {
+            lId = (ArrayList<ItemRemote>) home.findAllSections();
+            for (int i = 0; i < lId.size(); i++) {
+                itemRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), null, Item.ItemType.Section);
+                lItems.add(item);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+        return lItems;
     }
 
     @Override
     public List<Book> getAllBooksByRubric(int idRubric) throws DataBaseException {
-        return null;
+        List<Book> lBooks = new ArrayList<>();
+        ArrayList<BookRemote> lId;
+        BookRemote bookRemote;
+        Book book;
+        BookHome home = null;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+        try {
+            lId = (ArrayList<BookRemote>) home.findAllBooksByRubric(idRubric);
+            for (int i = 0; i < lId.size(); i++) {
+                bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                Item rubric = getRubricById(bookRemote.getParentId());
+                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+                lBooks.add(book);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+        return lBooks;
     }
 
     @Override
     public List<Book> getAmountOfBooks(int amount) throws DataBaseException {
-        return null;
+        List<Book> lBooks = new ArrayList<>();
+        ArrayList<BookRemote> lId;
+        BookRemote bookRemote;
+        Book book;
+        BookHome home = null;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+        try {
+            lId = (ArrayList<BookRemote>) home.getAmountOfBooks(amount);
+            for (int i = 0; i < lId.size(); i++) {
+                bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                Item rubric = getRubricById(bookRemote.getParentId());
+                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+                lBooks.add(book);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+        return lBooks;
     }
 
     @Override
     public Book getBookById(int bookId) throws DataBaseException {
-        return null;
+        BookRemote bookRemote;
+        Book book;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("BookEJB");
+            BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+            bookRemote = home.findByPrimaryKey(bookId);
+            Item rubric = getRubricById(bookRemote.getParentId());
+            Author author = getAuthorById(bookRemote.getAuthor().getId());
+            book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+        } catch (Exception e) {
+            throw new DataBaseException("Can't get customer by id", e);
+        }
+        return book;
     }
 
     @Override
@@ -433,9 +673,8 @@ public class OracleDataAccess implements ModelDataBase{
             Object objref = initial.lookup("CustomerEJB");
             CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
             customerRemote = home.findByPrimaryKey(customerId);
-            customer = new Customer(customerRemote.getId(),customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
-        } catch (Exception e)
-        {
+            customer = new Customer(customerRemote.getId(), customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
+        } catch (Exception e) {
             throw new DataBaseException("Can't get customer by id", e);
         }
         return customer;
@@ -455,7 +694,7 @@ public class OracleDataAccess implements ModelDataBase{
                     getCustomerById(orderRemote.getCustomer().getId()),
                     orderRemote.getDateOfOrder());
 
-            for (ContentOrdersForCust c: orderRemote.getContents()) {
+            for (ContentOrdersForCust c : orderRemote.getContents()) {
                 Order.ContentOrder con = order.new ContentOrder();
                 con.setBook(getBookById(c.getIDBook()), c.getAmount());
                 order.getContents().add(con);
@@ -476,8 +715,7 @@ public class OracleDataAccess implements ModelDataBase{
             AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
             authorRemote = home.findByPrimaryKey(authorId);
             author = new Author(authorRemote.getId(), authorRemote.getSurname(), authorRemote.getName());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new DataBaseException("Can't get author by id", e);
         }
         return author;
@@ -485,22 +723,99 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Item getRubricById(int rubricId) throws DataBaseException {
-        return null;
+        ItemRemote itemRemote;
+        Item item;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+            itemRemote = home.findByPrimaryKey(rubricId);
+            Item parent = getSectionById(itemRemote.getParentId());
+            item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), parent, Item.ItemType.Rubric);
+        } catch (Exception e) {
+            throw new DataBaseException("Can't get author by id", e);
+        }
+        return item;
     }
 
     @Override
     public Item getSectionById(int sectionId) throws DataBaseException {
-        return null;
+        ItemRemote itemRemote;
+        Item item;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+            itemRemote = home.findByPrimaryKey(sectionId);
+            item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), null, Item.ItemType.Section);
+        } catch (Exception e) {
+            throw new DataBaseException("Can't get author by id", e);
+        }
+        return item;
     }
 
     @Override
     public List<Book> getBooksByName(String name) throws DataBaseException {
-        return null;
+        List<Book> listBooks = new ArrayList<>();
+        ArrayList<BookRemote> lId;
+        BookRemote bookRemote;
+        BookHome home = null;
+        Book book;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("BookEJB");
+            home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+        try {
+            lId = (ArrayList<BookRemote>) home.findByName(name);
+            for (int i = 0; i < lId.size(); i++) {
+                bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                Item rubric = getRubricById(bookRemote.getParentId());
+                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+                listBooks.add(book);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+
+        return listBooks;
     }
 
     @Override
     public List<Item> getRubricBySection(int id) throws DataBaseException {
-        return null;
+        List<Item> lrubrics = new ArrayList<>();
+        ArrayList<ItemRemote> lId;
+        ItemRemote rubricRemote;
+        Item item;
+        ItemHome home = null;
+        Context initial = null;
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("ItemEJB");
+            home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+        try {
+            lId = (ArrayList<ItemRemote>) home.findAllRubricBySection(id);
+            for (int i = 0; i < lId.size(); i++) {
+                rubricRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                Item section = getSectionById(rubricRemote.getParentId());
+                item = new Item(rubricRemote.getIdItem(), rubricRemote.getName(), rubricRemote.getDescription(), section, Item.ItemType.Rubric);
+                lrubrics.add(item);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+        return lrubrics;
     }
 
     @Override
@@ -513,9 +828,9 @@ public class OracleDataAccess implements ModelDataBase{
             Object remObj = context.lookup("OrderEJB");
             orHm = (OrderHome) PortableRemoteObject.narrow(remObj, OrderHome.class);
 
-            ArrayList<Integer> list =  (ArrayList<Integer>) orHm.findOrderByIdCustomer(idCustomer);
+            ArrayList<Integer> list = (ArrayList<Integer>) orHm.findOrderByIdCustomer(idCustomer);
 
-            for (Integer id: list ) {
+            for (Integer id : list) {
                 listOr.add(getOrderById(id));
             }
         } catch (RemoteException | NamingException | FinderException e) {
@@ -523,10 +838,6 @@ public class OracleDataAccess implements ModelDataBase{
         }
 
         return listOr;
-    }
-
-    protected static class Singleton {
-        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
     }
 
 }
