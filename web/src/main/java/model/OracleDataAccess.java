@@ -151,7 +151,7 @@ public class OracleDataAccess implements ModelDataBase{
         } catch (CreateException e) {
             throw new DataBaseException("Can't create data due to CreateException", e);
         } catch (FinderException e) {
-            throw new DataBaseException("Can't find data due to CreateException", e);
+            throw new DataBaseException("Can't find data", e);
         }
     }
 
@@ -461,7 +461,7 @@ public class OracleDataAccess implements ModelDataBase{
                 order.getContents().add(con);
             }
         } catch (Exception e) {
-            throw new DataBaseException("Can't get author by id", e);
+            throw new DataBaseException("Can't get order by id", e);
         }
         return order;
     }
@@ -519,7 +519,7 @@ public class OracleDataAccess implements ModelDataBase{
                 listOr.add(getOrderById(id));
             }
         } catch (RemoteException | NamingException | FinderException e) {
-            e.printStackTrace();
+            throw new DataBaseException("Can't get order by id of customer", e);
         }
 
         return listOr;

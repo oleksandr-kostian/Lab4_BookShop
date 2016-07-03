@@ -72,6 +72,8 @@ public class OrderBean implements EntityBean {
 
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
+        System.out.println("OrderRemote bean method FindByPrimaryKey() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -189,7 +191,7 @@ public class OrderBean implements EntityBean {
         }
     }
 
-    public void ejbStore() throws EJBException {                              ///???
+    public void ejbStore() throws EJBException {                                                         ///?????????
         System.out.println("OrderRemote bean method ejbStore() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -205,7 +207,7 @@ public class OrderBean implements EntityBean {
         } catch (SQLException e) {
             throw new EJBException("Can't store data due to SQLException", e);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            throw new EJBException("Remote exception ", e);
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
@@ -288,6 +290,8 @@ public class OrderBean implements EntityBean {
     */
 
     public Collection ejbFindAllOrders() throws FinderException {
+        System.out.println("OrderRemote bean method ejbFindAllOrders() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -302,7 +306,7 @@ public class OrderBean implements EntityBean {
                 listOrder.add(this.idOrder);
             }
         } catch (Exception e) {
-            throw new EJBException("Can't get data for all items due to SQLException", e);
+            throw new EJBException("Can't get data for all orders due to SQLException", e);
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
@@ -326,7 +330,7 @@ public class OrderBean implements EntityBean {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new EJBException("Can't store data due to SQLException", e);
+            throw new EJBException("Can't update data due to SQLException", e);
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
