@@ -1,6 +1,6 @@
 package com.beans.order;
 
-import com.beans.customer.Customer;
+import com.beans.customer.CustomerRemote;
 import com.beans.customer.CustomerHome;
 import com.connection.DataSourceConnection;
 import com.model.ContentOrdersForCust;
@@ -41,7 +41,7 @@ public class OrderBean implements EntityBean {
         this.idOrder = id;
     }
 
-    public Customer getCustomer() {
+    public CustomerRemote getCustomer() {
         return customer;
     }
 
@@ -267,24 +267,24 @@ public class OrderBean implements EntityBean {
     }
 
   /*  @Override
-    public Integer ejbCreate(Customer customer, Date dateOfOrder) throws CreateException {
+    public Integer ejbCreate(CustomerRemote customer, Date dateOfOrder) throws CreateException {
         return null;
     }
 
     @Override
-    public void ejbPostCreate(Customer customer, Date dateOfOrder) throws CreateException {
-        System.out.println("OrderRemote bean method ejbPostCreate(Customer customer, Date dateOfOrder) was called.");
+    public void ejbPostCreate(CustomerRemote customer, Date dateOfOrder) throws CreateException {
+        System.out.println("Order bean method ejbPostCreate(CustomerRemote customer, Date dateOfOrder) was called.");
     }
 
     @Override
-    public Integer ejbCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
+    public Integer ejbCreate(int id, CustomerRemote customer, Date dateOfOrder) throws CreateException {
         return null;
     }
 
     @Override
-    public void ejbPostCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
-        System.out.println("OrderRemote bean method ejbPostCreate(int id, Customer customer, Date dateOfOrder) was called.");
-    }
+    public void ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) throws CreateException {
+        System.out.println("Order bean method ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) was called.");
+     }
     */
 
     public Collection ejbFindAllOrders() throws FinderException {

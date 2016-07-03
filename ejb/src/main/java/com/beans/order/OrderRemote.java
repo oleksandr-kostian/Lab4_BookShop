@@ -1,6 +1,8 @@
 package com.beans.order;
 
 import com.model.ContentOrdersForCust;
+import com.beans.customer.CustomerRemote;
+import com.model.ContentOrder;
 
 import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
