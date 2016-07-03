@@ -153,8 +153,7 @@ public class AuthorBean implements EntityBean {
             if (result.next()) {
                 k = result.getLong(1);
                 System.out.println("Auto Generated Primary Key " + k);
-                id = toIntExact(k);
-                this.id = id;
+                this.id = toIntExact(k);
                 this.surname = surname;
                 this.name = name;
 

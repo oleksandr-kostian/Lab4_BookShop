@@ -64,7 +64,19 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void updateCustomer(Customer customer) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("CustomerEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+        try {
+            home.updateById(customer.getId(),customer.getLogin(),customer.getPassword(),customer.getMail(),customer.getPhone(),customer.getRole());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't update data due to RemoteException", e);
+        }
     }
 
     @Override
@@ -79,7 +91,21 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void createCustomer(Customer customer) throws DataBaseException {
-
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("CustomerEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+        try {
+            home.create(customer.getLogin(),customer.getPassword(),customer.getMail(),customer.getPhone(),customer.getRole());
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't insert new data due to RemoteException", e);
+        } catch (CreateException e) {
+            throw new DataBaseException("Can't insert new data due to CreateException", e);
+        }
     }
 
     @Override
@@ -207,7 +233,27 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void removeCustomer(int customerId) throws DataBaseException {
+        Object objref = null;
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("CustomerEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
 
+        CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+        try {
+            try {
+                home.findByPrimaryKey(customerId);
+            } catch (FinderException e) {
+                throw new DataBaseException("Can't delete data due to FinderException", e);
+            }
+            home.remove(customerId);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't delete data due to RemoteException", e);
+        } catch (RemoveException e) {
+            throw new DataBaseException("Can't delete data due to RemoveException", e);
+        }
     }
 
     @Override
@@ -227,12 +273,54 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Customer> getAllCustomer() throws DataBaseException {
-        return null;
+        List<Customer> lCustomers = new ArrayList<Customer>();
+        ArrayList<com.beans.customer.Customer> lId;
+        com.beans.customer.Customer customerRemote;
+        Customer customer;
+        CustomerHome home = null;
+        Context initial = null;
+
+        try {
+            initial = new InitialContext();
+            Object objref = initial.lookup("CustomerEJB");
+            home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't find object by name", e);
+        }
+
+        try {
+            lId = (ArrayList<com.beans.customer.Customer>) home.findAllCustomers();
+            System.out.println("Customers id list: " + lId.size());
+            for (int i = 0; i < lId.size(); i++) {
+                System.out.println("Customers was added with id: " + lId.get(i).getId() + "; Customer login by id: " + lId.get(i).getLogin());
+                customerRemote = home.findByPrimaryKey(lId.get(i).getId());
+                customer = new Customer(customerRemote.getId(), customerRemote.getLogin(),customerRemote.getPassword(),customerRemote.geteMail(),customerRemote.getPhone(),customerRemote.getRole());
+                lCustomers.add(customer);
+            }
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't retrive data via RemoteException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't retrive data via FinderException", e);
+        }
+
+        return lCustomers;
     }
 
     @Override
-    public Customer getCustomer(String login, String Password) throws DataBaseException {
-        return null;
+    public Customer getCustomer(String login, String password) throws DataBaseException {
+        com.beans.customer.Customer customerRemote;
+        Customer customer;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("CustomerEJB");
+            CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+            customerRemote = home.findByName(login,password);
+            customer = new Customer(customerRemote.getId(),customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
+        } catch (Exception e)
+        {
+            throw new DataBaseException("Can't get customer by id", e);
+        }
+        return customer;
     }
 
     @Override
@@ -272,10 +360,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getAllOrder() throws DataBaseException {
-
-
-
-return null;
+        return null;
     }
 
     @Override
@@ -310,7 +395,19 @@ return null;
 
     @Override
     public Customer getCustomerById(int customerId) throws DataBaseException {
-        return null;
+        com.beans.customer.Customer customerRemote;
+        Customer customer;
+        try {
+            Context initial = new InitialContext();
+            Object objref = initial.lookup("CustomerEJB");
+            CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
+            customerRemote = home.findByPrimaryKey(customerId);
+            customer = new Customer(customerRemote.getId(),customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
+        } catch (Exception e)
+        {
+            throw new DataBaseException("Can't get customer by id", e);
+        }
+        return customer;
     }
 
     @Override
