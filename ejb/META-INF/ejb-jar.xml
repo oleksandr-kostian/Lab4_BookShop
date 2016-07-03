@@ -19,8 +19,35 @@
             <display-name>CustomerEJB</display-name>
             <ejb-name>CustomerEJB</ejb-name>
             <home>com.beans.customer.CustomerHome</home>
-            <remote>com.beans.customer.Customer</remote>
+            <remote>com.beans.customer.CustomerRemote</remote>
             <ejb-class>com.beans.customer.CustomerBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>true</reentrant>
+        </entity>
+        <entity>
+            <ejb-name>ItemEJB</ejb-name>
+            <home>com.beans.item.ItemHome</home>
+            <remote>com.beans.item.ItemRemote</remote>
+            <ejb-class>com.beans.item.ItemBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>true</reentrant>
+        </entity>
+        <entity>
+            <ejb-name>BookEJB</ejb-name>
+            <home>com.beans.book.BookHome</home>
+            <remote>com.beans.book.BookRemote</remote>
+            <ejb-class>com.beans.book.BookBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>true</reentrant>
+        </entity>
+        <entity>
+            <ejb-name>AuthorEJB</ejb-name>
+            <home>com.beans.author.AuthorHome</home>
+            <remote>com.beans.author.AuthorRemote</remote>
+            <ejb-class>com.beans.author.AuthorBean</ejb-class>
             <persistence-type>Bean</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>true</reentrant>

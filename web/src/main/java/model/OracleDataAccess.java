@@ -78,10 +78,6 @@ public class OracleDataAccess implements ModelDataBase{
         }
     }
 
-    @Override
-    public void updateItem(Item item) throws DataBaseException {
-
-    }
 
     @Override
     public void updateBookOfOrder(int idOrder, int idBook, int count) throws DataBaseException {
@@ -175,11 +171,6 @@ public class OracleDataAccess implements ModelDataBase{
     }
 
     @Override
-    public void addBookToOrder(Order order, Book book, int count) throws DataBaseException {
-
-    }
-
-    @Override
     public void removeBook(int bookId) throws DataBaseException {
 
     }
@@ -266,11 +257,6 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void removeSection(int sectionId) throws DataBaseException {
-
-    }
-
-    @Override
-    public void removeBookFromOrder(int idOrder, int idBook) throws DataBaseException {
 
     }
 
@@ -401,11 +387,6 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Item> getAllSection() throws DataBaseException {
-        return null;
-    }
-
-    @Override
-    public List<Book> getAllBooks() throws DataBaseException {
         return null;
     }
 

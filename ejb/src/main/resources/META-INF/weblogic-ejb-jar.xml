@@ -10,4 +10,8 @@
         <ejb-name>CustomerEJB</ejb-name>
         <jndi-name>CustomerEJB</jndi-name>
     </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>AuthorEJB</ejb-name>
+        <jndi-name>AuthorEJB</jndi-name>
+    </weblogic-enterprise-bean>
 </weblogic-ejb-jar>

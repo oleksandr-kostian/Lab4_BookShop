@@ -42,7 +42,7 @@ public class OrderBean implements EntityBean {
     }
 
     public CustomerRemote getCustomer() {
-        return customer;
+        return customerRemote;
     }
 
     public void setCustomer(CustomerRemote customerRemote) {
