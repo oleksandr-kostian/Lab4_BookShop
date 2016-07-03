@@ -19,6 +19,8 @@ public interface OrderHome extends EJBHome {
     com.beans.order.Order create (Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
     //com.beans.order.Order create () throws RemoteException, CreateException;  ??? или пустой конструктор?*/
 
-    OrderRemote findByPrimaryKey(Integer key) throws RemoteException, FinderException; //?бин или число?
+    OrderRemote findByPrimaryKey(Integer key) throws RemoteException, FinderException; //?бин или число? при переопределении возвращает число
     Collection findAllOrders() throws FinderException, RemoteException;
+    void updateBookOfOrder(int idOrder, int idBook, int count) throws RemoteException;
+    Collection findOrderByIdCustomer(Integer idCustomer) throws RemoteException, FinderException;
 }

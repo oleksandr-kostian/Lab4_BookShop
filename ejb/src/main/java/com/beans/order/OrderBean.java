@@ -303,10 +303,59 @@ public class OrderBean implements EntityBean {
             }
         } catch (Exception e) {
             throw new EJBException("Can't get data for all items due to SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
         return listOrder;
+    }
+
+    @Override
+    public void ejbHomeUpdateBookOfOrder(int idOrder, int idBook, int count) {
+        System.out.println("Order bean method UpdateBookOfOrder(int idOrder, int idBook, int count) was called.");
+
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.
+                    prepareStatement("UPDATE CONTENR_ORDER SET AMOUNT=? WHERE ID_ORDER = ? AND ID_BOOK=?");
+            statement.setInt(1, count);
+            statement.setInt(2, idOrder);
+            statement.setInt(3, idBook);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new EJBException("Can't store data due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+    }
+
+
+    @Override
+    public Collection ejbFindOrderByIdCustomer(Integer idCustomer) throws FinderException {
+        System.out.println("Order bean method ejbFindOrderByIdCustomer() was called.");
+
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+
+        ArrayList<Integer> list = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE ID_CUSTOMER = ?");
+            statement.setInt(1, idCustomer);
+            result = statement.executeQuery();
+
+            while (result.next()) {
+                list.add(result.getInt("ID_ORDER"));
+            }
+        } catch (SQLException e) {
+            throw new EJBException("Can't load data by id  due to SQLException", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+
+        return list;
     }
 }

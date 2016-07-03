@@ -7,6 +7,7 @@ import com.beans.customer.CustomerRemote;
 import com.beans.order.OrderHome;
 import com.beans.order.OrderRemote;
 import com.model.ContentOrdersForCust;
+import com.sun.xml.internal.bind.CycleRecoverable;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
+import javax.swing.text.AbstractDocument;
 import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +87,20 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void updateBookOfOrder(int idOrder, int idBook, int count) throws DataBaseException {
+        Object objref = null;
 
+        try {
+            Context initial = new InitialContext();
+            objref = initial.lookup("OrderEJB");
+        } catch (NamingException e) {
+            throw new DataBaseException("Can't insert new data", e);
+        }
+        OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+        try {
+            home.updateBookOfOrder(idOrder, idBook, count);
+        } catch (RemoteException e) {
+            throw new DataBaseException("Can't update data due to RemoteException", e);
+        }
     }
 
     @Override
@@ -486,7 +505,24 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getOrderByIdCustomer(int idCustomer) throws DataBaseException {
-        return null;
+        ArrayList<Order> listOr = new ArrayList<>();
+        OrderHome orHm;
+
+        try {
+            Context context = new InitialContext();
+            Object remObj = context.lookup("OrderEJB");
+            orHm = (OrderHome) PortableRemoteObject.narrow(remObj, OrderHome.class);
+
+            ArrayList<Integer> list =  (ArrayList<Integer>) orHm.findOrderByIdCustomer(idCustomer);
+
+            for (Integer id: list ) {
+                listOr.add(getOrderById(id));
+            }
+        } catch (RemoteException | NamingException | FinderException e) {
+            e.printStackTrace();
+        }
+
+        return listOr;
     }
 
     protected static class Singleton {
