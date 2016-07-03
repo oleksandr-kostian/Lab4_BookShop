@@ -8,4 +8,9 @@ import java.rmi.RemoteException;
  */
 public interface Customer extends EJBObject {
     Integer getId() throws RemoteException;
+    String getLogin() throws RemoteException;
+    String getPassword() throws RemoteException;
+    String geteMail()throws RemoteException;
+    String getPhone()throws RemoteException;
+    int getRole()throws RemoteException;
 }
