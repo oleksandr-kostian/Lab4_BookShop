@@ -3,7 +3,7 @@ package com.beans.order;
 import com.beans.customer.Customer;
 import com.beans.customer.CustomerHome;
 import com.connection.DataSourceConnection;
-import com.model.ContentOrder;
+import com.model.ContentOrdersForCust;
 
 import javax.ejb.*;
 import javax.naming.Context;
@@ -21,15 +21,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class OrderBean implements EntityBean {
+
     private int idOrder;
-    private CustomerRemote customer;
+    private CustomerRemote customerRemote;
     private Date dateOfOrder;
-    private ArrayList<ContentOrder> content;
+    private ArrayList<ContentOrdersForCust> content;
 
     private EntityContext context;
 
     public OrderBean() {
-        content = new ArrayList<ContentOrder>();
+        content = new ArrayList<ContentOrdersForCust>();
     }
 
     public int getIdOrder() {
@@ -44,8 +45,8 @@ public class OrderBean implements EntityBean {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomer(CustomerRemote customerRemote) {
+        this.customerRemote = customerRemote;
     }
 
     public Date getDateOfOrder() {
@@ -56,22 +57,17 @@ public class OrderBean implements EntityBean {
         this.dateOfOrder = dateOfOrder;
     }
 
-    public ArrayList<ContentOrder> getContents() {
+    public ArrayList<ContentOrdersForCust> getContents() {
         return content;
     }
 
-    public void setContents(ArrayList<ContentOrder> contents) {
+    public void setContents(ArrayList<ContentOrdersForCust> contents) {
         this.content = contents;
     }
 
-    public void addCon(ContentOrder con) {
+    public void addCon(ContentOrdersForCust con) {
         content.add(con);
     }
-
-
-
-
-
 
 
 
@@ -107,9 +103,11 @@ public class OrderBean implements EntityBean {
 
     public void ejbRemove() throws RemoveException, EJBException {
         System.out.println("OrderRemote bean method ejbRemove() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
+
         try {
             statement = connection.prepareStatement("DELETE ORDERS WHERE ID_ORDER = ?");
             statement.setInt(1, this.getIdOrder());
@@ -150,16 +148,17 @@ public class OrderBean implements EntityBean {
 
         try {
             statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE ID_ORDER = ?");
-            statement.setInt(1,this.idOrder);
+            statement.setInt(1, this.idOrder);
             result = statement.executeQuery();
+
             if(result.next()) {
                 this.idOrder = result.getInt("ID_ORDER");
 
                 Context initial = new InitialContext();
                 Object objref = initial.lookup("CustomerEJB");
                 CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
-                Customer cr = home.findByPrimaryKey(result.getInt("ID_CUSTOMER"));
-                this.customer = cr;
+                CustomerRemote cr = home.findByPrimaryKey(result.getInt("ID_CUSTOMER"));
+                this.customerRemote = cr;
 
                 String string = result.getString("DATA");
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -178,17 +177,13 @@ public class OrderBean implements EntityBean {
                     int idBook = result.getInt("ID_BOOK");
                     int amount = result.getInt("AMOUNT");
 
-                    this.getContents().add(new ContentOrder(idBook, amount));
+                    this.getContents().add(new ContentOrdersForCust(idBook, amount));
                 }
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NamingException e) {
-            e.printStackTrace();
-        } catch (FinderException e) {
-            e.printStackTrace();
+        } catch (RemoteException | FinderException | NamingException e) {
+            throw new EJBException("Exception ", e);
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
@@ -217,8 +212,9 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public Integer ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("OrderRemote bean method ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+    public Integer ejbCreate(Integer id, CustomerRemote customerRemote, Date dateOfOrder, ArrayList<ContentOrdersForCust> con)
+            throws CreateException {
+        System.out.println("OrderRemote bean method ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -227,7 +223,7 @@ public class OrderBean implements EntityBean {
         try {
             statement = connection.prepareStatement("{call  ADDORDER(?,?,?,?)}");
 
-            statement.setInt(1, customer.getId());
+            statement.setInt(1, customerRemote.getId());
             statement.setInt(2, con.get(0).getIDBook());
             statement.setInt(3, con.get(0).getAmount());
             statement.setDate(4, (java.sql.Date) dateOfOrder);
@@ -241,13 +237,13 @@ public class OrderBean implements EntityBean {
             while (result.next()) {
                 int idOr = result.getInt("MAX(ID_ORDER)");
                 this.setIdOrder(idOr);
-                this.setCustomer(customer);
+                this.setCustomer(customerRemote);
                 this.setDateOfOrder(dateOfOrder);
                 this.setContents(con);
             }
             statement = null;
             for(int i = 1; i <= this.getContents().size() - 1; i++){
-                statement = connection.prepareStatement("INSERT INTO CONTENR_ORDER(ID_ORDER,ID_BOOK,AMOUNT) values(?,?,?)");
+                statement = connection.prepareStatement("INSERT INTO CONTENR_ORDER(ID_ORDER, ID_BOOK, AMOUNT) values(?,?,?)");
                 statement.setInt(1, this.getIdOrder());
                 statement.setInt(2, this.getContents().get(i).getIDBook());
                 statement.setInt(3, this.getContents().get(i).getAmount());
@@ -265,8 +261,9 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public void ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("OrderRemote bean method ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+    public void ejbPostCreate(Integer id, CustomerRemote customerRemote, Date dateOfOrder, ArrayList<ContentOrdersForCust> con)
+            throws CreateException {
+        System.out.println("OrderRemote bean method ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) was called.");
     }
 
   /*  @Override
@@ -299,6 +296,7 @@ public class OrderBean implements EntityBean {
         try {
             statement = connection.prepareStatement("SELECT ID_ORDER FROM ORDERS");
             result = statement.executeQuery();
+
             while (result.next()) {
                 this.idOrder = result.getInt("ID_ORDER");
                 listOrder.add(this.idOrder);
@@ -311,5 +309,4 @@ public class OrderBean implements EntityBean {
         }
         return listOrder;
     }
-
 }

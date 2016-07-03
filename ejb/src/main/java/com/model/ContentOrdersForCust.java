@@ -1,12 +1,12 @@
 package com.model;
 
-public class ContentOrder {
+public class ContentOrdersForCust {
 
     private Integer idBook;
     private Integer amount;
 
 
-    public ContentOrder (Integer idBook, Integer amount) {
+    public ContentOrdersForCust(Integer idBook, Integer amount) {
         this.idBook = idBook;
         this.amount = amount;
     }

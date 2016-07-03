@@ -1,7 +1,6 @@
 package com.beans.order;
 
-import com.model.ContentOrder;
-import com.beans.customer.Customer;
+import com.model.ContentOrdersForCust;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
@@ -13,7 +12,7 @@ import java.util.Date;
 
 
 public interface OrderHome extends EJBHome {
-    OrderRemote create (Integer id, CustomerRemote customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws RemoteException, CreateException;
+    OrderRemote create (Integer id, CustomerRemote customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) throws RemoteException, CreateException;
 
    /* com.beans.order.OrderRemote create (int id, Customer customer, Date dateOfOrder) throws RemoteException, CreateException;
     com.beans.order.OrderRemote create (Customer customer, Date dateOfOrder) throws RemoteException, CreateException;

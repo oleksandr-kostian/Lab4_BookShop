@@ -1,6 +1,6 @@
 package com.beans.order;
 
-import com.model.ContentOrder;
+import com.model.ContentOrdersForCust;
 
 import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
@@ -13,5 +13,5 @@ public interface OrderRemote extends EJBObject {
     void setIdOrder(int id) throws RemoteException;
     CustomerRemote getCustomer() throws RemoteException;
     Date getDateOfOrder() throws RemoteException;
-    ArrayList<ContentOrder> getContents() throws RemoteException;
+    ArrayList<ContentOrdersForCust> getContents() throws RemoteException;
 }

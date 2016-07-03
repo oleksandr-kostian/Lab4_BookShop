@@ -4,6 +4,7 @@ import com.beans.author.AuthorHome;
 import com.beans.customer.CustomerHome;
 import com.beans.order.OrderHome;
 import com.beans.order.OrderRemote;
+import com.model.ContentOrdersForCust;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 
@@ -106,29 +107,34 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public void createOrder(Order order) throws DataBaseException {
-        Object objref = null;
+        Object objref_order = null;
         Object objref_Cus = null;
+
         try {
             Context initial = new InitialContext();
-            objref = initial.lookup("OrderEJB");
-            objref_Cus = initial.lookup("CustomerEJB");
+            objref_order = initial.lookup("OrderEJB");
+            objref_Cus   = initial.lookup("CustomerEJB");
         } catch (NamingException e) {
             throw new DataBaseException("Can't insert new data", e);
         }
-        OrderHome home = (OrderHome) PortableRemoteObject.narrow(objref, OrderHome.class);
+
+        OrderHome    orderHome    = (OrderHome)    PortableRemoteObject.narrow(objref_order, OrderHome.class);
         CustomerHome customerHome = (CustomerHome) PortableRemoteObject.narrow(objref_Cus, CustomerHome.class);
+
         try {
-            ArrayList<com.model.ContentOrder> arr = new ArrayList<>();
+            ArrayList<ContentOrdersForCust> arr = new ArrayList<>();
+
             for (Order.ContentOrder c : order.getContents()) {
-                com.model.ContentOrder con = new com.model.ContentOrder(c.getBooks().getId(), c.getAmount());
-                arr.add(con);
+                arr.add(new ContentOrdersForCust(c.getBooks().getId(), c.getAmount()));
             }
 
-            home.create(null, customerHome.create(customerHome), order.getDateOfOrder(), arr);
+            orderHome.create(null, customerHome.findByPrimaryKey(order.getCustomer().getId()), order.getDateOfOrder(), arr);
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
-            throw new DataBaseException("Can't insert new data due to CreateException", e);
+            throw new DataBaseException("Can't create data due to CreateException", e);
+        } catch (FinderException e) {
+            throw new DataBaseException("Can't find data due to CreateException", e);
         }
     }
 
@@ -355,7 +361,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public List<Order> getAllOrder() throws DataBaseException {
-        ArrayList<model.Order> list_orders = new ArrayList<>();
+        ArrayList<Order> list_orders = new ArrayList<>();
 
         ArrayList<OrderRemote> lId;
         OrderHome home;
@@ -384,7 +390,6 @@ public class OracleDataAccess implements ModelDataBase{
         }
 
         return list_orders;
-
     }
 
     @Override
@@ -448,7 +453,7 @@ public class OracleDataAccess implements ModelDataBase{
                     getCustomerById(orderRemote.getCustomer().getId()),
                     orderRemote.getDateOfOrder());
 
-            for (com.model.ContentOrder c: orderRemote.getContents()) {
+            for (ContentOrdersForCust c: orderRemote.getContents()) {
                 Order.ContentOrder con = order.new ContentOrder();
                 con.setBook(getBookById(c.getIDBook()), c.getAmount());
                 order.getContents().add(con);
