@@ -77,7 +77,7 @@ public class BookBean extends ItemBean implements EntityBean {
         PreparedStatement statement = null;
         this.setIdItem((Integer) context.getPrimaryKey());
         try {
-            statement = connection.prepareStatement("DELETE FROM ITEM WHERE ID_ITEM = ? AND TYPE = 0");
+            statement = connection.prepareStatement("{call  DELETEBOOK(?)}");
             statement.setInt(1, this.getIdItem());
             statement.execute();
         } catch (SQLException e) {
