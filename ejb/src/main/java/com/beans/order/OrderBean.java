@@ -1,6 +1,6 @@
 package com.beans.order;
 
-import com.beans.customer.Customer;
+import com.beans.customer.CustomerRemote;
 import com.beans.customer.CustomerHome;
 import com.connection.DataSourceConnection;
 import com.model.ContentOrder;
@@ -24,7 +24,7 @@ import java.util.Locale;
 
 public class OrderBean implements EntityBean {
     private int idOrder;
-    private Customer customer;
+    private CustomerRemote customer;
     private Date dateOfOrder;
     private ArrayList<ContentOrder> content;
 
@@ -42,11 +42,11 @@ public class OrderBean implements EntityBean {
         this.idOrder = id;
     }
 
-    public Customer getCustomer() {
+    public CustomerRemote getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(CustomerRemote customer) {
         this.customer = customer;
     }
 
@@ -160,7 +160,7 @@ public class OrderBean implements EntityBean {
                 Context initial = new InitialContext();
                 Object objref = initial.lookup("CustomerEJB");
                 CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
-                Customer cr = home.findByPrimaryKey(result.getInt("ID_CUSTOMER"));
+                CustomerRemote cr = home.findByPrimaryKey(result.getInt("ID_CUSTOMER"));
                 this.customer = cr;
 
                 String string = result.getString("DATA");
@@ -209,8 +209,8 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public Integer ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("Order bean method ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+    public Integer ejbCreate(Integer id, CustomerRemote Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
+        System.out.println("Order bean method ejbCreate(Integer id, CustomerRemote CustomerRemote, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -257,28 +257,28 @@ public class OrderBean implements EntityBean {
     }
 
     @Override
-    public void ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
-        System.out.println("Order bean method ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
+    public void ejbPostCreate(Integer id, CustomerRemote Customer, Date dateOfOrder, ArrayList<ContentOrder> con) throws CreateException {
+        System.out.println("Order bean method ejbPostCreate(Integer id, CustomerRemote CustomerRemote, Date dateOfOrder, ArrayList<ContentOrder> con) was called.");
     }
 
   /*  @Override
-    public Integer ejbCreate(Customer customer, Date dateOfOrder) throws CreateException {
+    public Integer ejbCreate(CustomerRemote customer, Date dateOfOrder) throws CreateException {
         return null;
     }
 
     @Override
-    public void ejbPostCreate(Customer customer, Date dateOfOrder) throws CreateException {
-        System.out.println("Order bean method ejbPostCreate(Customer customer, Date dateOfOrder) was called.");
+    public void ejbPostCreate(CustomerRemote customer, Date dateOfOrder) throws CreateException {
+        System.out.println("Order bean method ejbPostCreate(CustomerRemote customer, Date dateOfOrder) was called.");
     }
 
     @Override
-    public Integer ejbCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
+    public Integer ejbCreate(int id, CustomerRemote customer, Date dateOfOrder) throws CreateException {
         return null;
     }
 
     @Override
-    public void ejbPostCreate(int id, Customer customer, Date dateOfOrder) throws CreateException {
-        System.out.println("Order bean method ejbPostCreate(int id, Customer customer, Date dateOfOrder) was called.");
+    public void ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) throws CreateException {
+        System.out.println("Order bean method ejbPostCreate(int id, CustomerRemote customer, Date dateOfOrder) was called.");
     }
     */
 }

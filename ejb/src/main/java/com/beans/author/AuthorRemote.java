@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Слава on 02.07.2016.
  */
-public interface Author extends EJBObject {
+public interface AuthorRemote extends EJBObject {
     int getId() throws RemoteException;
 
     String getSurname() throws RemoteException;

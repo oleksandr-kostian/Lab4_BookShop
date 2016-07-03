@@ -1,7 +1,9 @@
 package model;
 
 import com.beans.author.AuthorHome;
+import com.beans.author.AuthorRemote;
 import com.beans.customer.CustomerHome;
+import com.beans.customer.CustomerRemote;
 import com.beans.order.OrderHome;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
@@ -13,11 +15,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-import javax.sql.DataSource;
 import java.rmi.RemoteException;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -274,8 +273,8 @@ public class OracleDataAccess implements ModelDataBase{
     @Override
     public List<Customer> getAllCustomer() throws DataBaseException {
         List<Customer> lCustomers = new ArrayList<Customer>();
-        ArrayList<com.beans.customer.Customer> lId;
-        com.beans.customer.Customer customerRemote;
+        ArrayList<CustomerRemote> lId;
+        CustomerRemote customerRemote;
         Customer customer;
         CustomerHome home = null;
         Context initial = null;
@@ -289,10 +288,10 @@ public class OracleDataAccess implements ModelDataBase{
         }
 
         try {
-            lId = (ArrayList<com.beans.customer.Customer>) home.findAllCustomers();
+            lId = (ArrayList<CustomerRemote>) home.findAllCustomers();
             System.out.println("Customers id list: " + lId.size());
             for (int i = 0; i < lId.size(); i++) {
-                System.out.println("Customers was added with id: " + lId.get(i).getId() + "; Customer login by id: " + lId.get(i).getLogin());
+                System.out.println("Customers was added with id: " + lId.get(i).getId() + "; CustomerRemote login by id: " + lId.get(i).getLogin());
                 customerRemote = home.findByPrimaryKey(lId.get(i).getId());
                 customer = new Customer(customerRemote.getId(), customerRemote.getLogin(),customerRemote.getPassword(),customerRemote.geteMail(),customerRemote.getPhone(),customerRemote.getRole());
                 lCustomers.add(customer);
@@ -308,7 +307,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Customer getCustomer(String login, String password) throws DataBaseException {
-        com.beans.customer.Customer customerRemote;
+        CustomerRemote customerRemote;
         Customer customer;
         try {
             Context initial = new InitialContext();
@@ -326,8 +325,8 @@ public class OracleDataAccess implements ModelDataBase{
     @Override
     public List<Author> getAllAuthor() throws DataBaseException {
         List<Author> lAuthors = new ArrayList<Author>();
-        ArrayList<com.beans.author.Author> lId;
-        com.beans.author.Author authorRemote;
+        ArrayList<AuthorRemote> lId;
+        AuthorRemote authorRemote;
         Author author;
         AuthorHome home = null;
         Context initial = null;
@@ -341,10 +340,10 @@ public class OracleDataAccess implements ModelDataBase{
         }
 
         try {
-            lId = (ArrayList<com.beans.author.Author>) home.findAllAuthors();
+            lId = (ArrayList<AuthorRemote>) home.findAllAuthors();
             System.out.println("Authors id list: " + lId.size());
             for (int i = 0; i < lId.size(); i++) {
-                System.out.println("Authors was added with id: " + lId.get(i).getId() + "; Author name by id: " + lId.get(i).getName());
+                System.out.println("Authors was added with id: " + lId.get(i).getId() + "; AuthorRemote name by id: " + lId.get(i).getName());
                 authorRemote = home.findByPrimaryKey(lId.get(i).getId());
                 author = new Author(authorRemote.getId(), authorRemote.getSurname(),authorRemote.getName());
                 lAuthors.add(author);
@@ -395,7 +394,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Customer getCustomerById(int customerId) throws DataBaseException {
-        com.beans.customer.Customer customerRemote;
+        CustomerRemote customerRemote;
         Customer customer;
         try {
             Context initial = new InitialContext();
@@ -417,7 +416,7 @@ public class OracleDataAccess implements ModelDataBase{
 
     @Override
     public Author getAuthorById(int authorId) throws DataBaseException {
-        com.beans.author.Author authorRemote;
+        AuthorRemote authorRemote;
         Author author;
         try {
             Context initial = new InitialContext();
