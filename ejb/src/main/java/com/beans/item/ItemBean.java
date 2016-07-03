@@ -82,7 +82,7 @@ public class ItemBean implements EntityBean {
     }
 
     public Integer ejbFindByPrimaryKey(Integer  key) throws FinderException {
-        System.out.println("Item bean method ejbFindByPrimaryKey() was called.");
+        System.out.println("ItemRemote bean method ejbFindByPrimaryKey() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -105,17 +105,17 @@ public class ItemBean implements EntityBean {
     }
 
     public void setEntityContext(EntityContext entityContext) throws EJBException {
-        System.out.println("Item bean context was set.");
+        System.out.println("ItemRemote bean context was set.");
         this.context = entityContext;
     }
 
     public void unsetEntityContext() throws EJBException {
-        System.out.println("Item bean context was unset.");
+        System.out.println("ItemRemote bean context was unset.");
         this.context = null;
     }
 
     public void ejbRemove() throws RemoveException, EJBException {
-        System.out.println("Item bean method ejbRemove() was called.");
+        System.out.println("ItemRemote bean method ejbRemove() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -133,12 +133,12 @@ public class ItemBean implements EntityBean {
     }
 
     public void ejbActivate() throws EJBException {
-        System.out.println("Item bean was activated.");
+        System.out.println("ItemRemote bean was activated.");
         this.idItem = (Integer) context.getPrimaryKey();
     }
 
     public void ejbPassivate() throws EJBException {
-        System.out.println("Item bean was passivated.");
+        System.out.println("ItemRemote bean was passivated.");
     }
 
     public ItemBean getItemById(Integer id, ItemType type) throws FinderException {
@@ -210,7 +210,7 @@ public class ItemBean implements EntityBean {
     }
 
     public void ejbLoad() throws EJBException {
-        System.out.println("Item bean method ejbLoad() was called.");
+        System.out.println("ItemRemote bean method ejbLoad() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -237,7 +237,7 @@ public class ItemBean implements EntityBean {
     }
 
     public void ejbStore() throws EJBException {
-        System.out.println("Item bean method ejbStore() was called.");
+        System.out.println("ItemRemote bean method ejbStore() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;

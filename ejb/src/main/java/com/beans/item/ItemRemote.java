@@ -7,10 +7,11 @@ import java.rmi.RemoteException;
 /**
  * Created by Veleri on 30.06.2016.
  */
-public interface Item extends EJBObject {
-    int getIdItem()throws RemoteException, FinderException;
+public interface ItemRemote extends EJBObject {
+    Integer getIdItem()throws RemoteException, FinderException;
     String getName() throws RemoteException, FinderException;
     String getDescription() throws RemoteException, FinderException;
     ItemBean.ItemType getType() throws RemoteException, FinderException;
+    ItemBean getParentbyId(Integer id) throws RemoteException, FinderException;
 
 }

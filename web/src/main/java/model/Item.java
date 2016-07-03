@@ -7,7 +7,7 @@ package model;
  * @version %I%, %G%
  */
 public class Item {
-    private int idItem;
+    private Integer idItem;
     private String name;
     private String description;
     private ItemType type;
