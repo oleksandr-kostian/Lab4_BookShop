@@ -142,7 +142,7 @@ public class AuthorBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Integer ejbCreate(String name,String surname) throws CreateException {
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -173,11 +173,11 @@ public class AuthorBean implements EntityBean {
         return id;
     }
 
-    @Override
+
     public void ejbPostCreate(String name, String surname) throws CreateException {
     }
 
-    @Override
+
     public Collection ejbFindAllAuthors() throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         System.out.println("Connected!");
@@ -200,7 +200,7 @@ public class AuthorBean implements EntityBean {
         return lAuthors;
     }
 
-    @Override
+
     public void ejbHomeUpdateById(int id,String surname, String name) {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;

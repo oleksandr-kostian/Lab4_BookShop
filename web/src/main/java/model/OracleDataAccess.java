@@ -12,7 +12,6 @@ import com.beans.item.ItemRemote;
 import com.beans.order.OrderHome;
 import com.beans.order.OrderRemote;
 import com.model.ContentOrdersForCust;
-import com.sun.xml.internal.bind.CycleRecoverable;
 import exception.DataBaseException;
 import org.apache.log4j.Logger;
 

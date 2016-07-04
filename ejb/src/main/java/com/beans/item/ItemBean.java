@@ -19,7 +19,7 @@ import static java.lang.Math.toIntExact;
  */
 public class ItemBean implements EntityBean {
 
-    private Integer idItem;
+    private int idItem;
     private String name;
     private String description;
     private ItemType type;
@@ -50,7 +50,7 @@ public class ItemBean implements EntityBean {
         return name;
     }
 
-    public void setIdItem(Integer idItem) {
+    public void setIdItem(int idItem) {
         this.idItem = idItem;
     }
 
@@ -79,7 +79,7 @@ public class ItemBean implements EntityBean {
         return type;
     }
 
-    public int getParent() {
+    public int getParentId() {
         return parentId;
     }
 
@@ -126,7 +126,7 @@ public class ItemBean implements EntityBean {
         return item;
     }
 
-    private Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
+    public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
         System.out.println("ItemRemote bean method ejbFindByPrimaryKey() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -220,7 +220,7 @@ public class ItemBean implements EntityBean {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
-            statement.setInt(1, getParent());
+            statement.setInt(1, getParentId());
             statement.setString(2, getName());
             statement.setString(3, getDescription());
             statement.setInt(4, getIdItem());
@@ -232,7 +232,7 @@ public class ItemBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Integer ejbCreateItem(String name, String description, int parentId, ItemType type) throws CreateException {
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -279,12 +279,12 @@ public class ItemBean implements EntityBean {
         return getIdItem();
     }
 
-    @Override
+
     public void ejbPostCreateItem(String name, String description, int parentId, ItemType type) throws CreateException {
 
     }
 
-    @Override
+
     public Collection ejbFindAllRubirc() throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -305,7 +305,7 @@ public class ItemBean implements EntityBean {
         return lRubric;
     }
 
-    @Override
+
     public Collection ejbFindAllSections() throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -326,7 +326,7 @@ public class ItemBean implements EntityBean {
         return lRubric;
     }
 
-    @Override
+
     public Collection ejbFindAllRubricBySection(Integer id) throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;

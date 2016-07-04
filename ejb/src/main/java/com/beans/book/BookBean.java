@@ -46,9 +46,9 @@ public class BookBean extends ItemBean implements EntityBean {
         return author;
     }
 
-    @Override
-    public Integer getParentId() throws FinderException {
-        return this.getParent();
+
+    public int getParentId()  {
+        return this.getParentId();
     }
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
@@ -150,7 +150,7 @@ public class BookBean extends ItemBean implements EntityBean {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ? AND TYPE = 0");
-            statement.setInt(1, getParent());
+            statement.setInt(1, getParentId());
             statement.setString(2, getName());
             statement.setString(3, getDescription());
             statement.setInt(4, getIdItem());
@@ -202,7 +202,7 @@ public class BookBean extends ItemBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Integer ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -246,12 +246,12 @@ public class BookBean extends ItemBean implements EntityBean {
         return getIdItem();
     }
 
-    @Override
+
     public void ejbPostCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
 
     }
 
-    @Override
+
     public Collection ejbFindByName(String name) throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -286,7 +286,7 @@ public class BookBean extends ItemBean implements EntityBean {
         return lBook;
     }
 
-    @Override
+
     public Collection ejbFindAllBooksByRubric(Integer id) throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -311,7 +311,7 @@ public class BookBean extends ItemBean implements EntityBean {
         return lBooks;
     }
 
-    @Override
+
     public Collection ejbHomeGetAmountOfBooks(int amount) throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;

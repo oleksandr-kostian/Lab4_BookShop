@@ -213,7 +213,7 @@ public class OrderBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Integer ejbCreate(Integer id, CustomerRemote customerRemote, Date dateOfOrder, ArrayList<ContentOrdersForCust> con)
             throws CreateException {
         System.out.println("OrderRemote bean method ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) was called.");
@@ -262,7 +262,7 @@ public class OrderBean implements EntityBean {
         return id;
     }
 
-    @Override
+
     public void ejbPostCreate(Integer id, CustomerRemote customerRemote, Date dateOfOrder, ArrayList<ContentOrdersForCust> con)
             throws CreateException {
         System.out.println("OrderRemote bean method ejbPostCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) was called.");
@@ -313,7 +313,7 @@ public class OrderBean implements EntityBean {
         return listOrder;
     }
 
-    @Override
+
     public void ejbHomeUpdateBookOfOrder(int idOrder, int idBook, int count) {
         System.out.println("Order bean method UpdateBookOfOrder(int idOrder, int idBook, int count) was called.");
 
@@ -337,7 +337,7 @@ public class OrderBean implements EntityBean {
     }
 
 
-    @Override
+
     public Collection ejbFindOrderByIdCustomer(Integer idCustomer) throws FinderException {
         System.out.println("Order bean method ejbFindOrderByIdCustomer() was called.");
 

@@ -15,7 +15,7 @@ public interface ItemHome extends EJBHome {
 
     ItemRemote findByPrimaryKey(Integer key) throws RemoteException, FinderException;
 
-    BookRemote createItem(String name, String description, int parentId, ItemBean.ItemType type) throws RemoteException, CreateException;
+    ItemRemote createItem(String name, String description, int parentId, ItemBean.ItemType type) throws RemoteException, CreateException;
 
     ItemRemote findByPrimaryKeyForType(Integer key, ItemBean.ItemType type) throws FinderException, RemoteException;
 

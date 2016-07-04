@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  */
 public interface ItemRemote extends EJBObject {
 
-    Integer getIdItem() throws RemoteException, FinderException;
+    int getIdItem() throws RemoteException, FinderException;
 
     String getName() throws RemoteException, FinderException;
 
@@ -17,6 +17,6 @@ public interface ItemRemote extends EJBObject {
 
     ItemBean.ItemType getType() throws RemoteException, FinderException;
 
-    Integer getParentId() throws RemoteException, FinderException;
+    int getParentId() throws RemoteException, FinderException;
 
 }

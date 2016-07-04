@@ -150,12 +150,12 @@ public class CustomerBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Integer getId() {
         return id;
     }
 
-    @Override
+
     public Integer ejbCreate(String login, String password, String eMail, String phone, int role) throws CreateException {
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -192,12 +192,12 @@ public class CustomerBean implements EntityBean {
         return id;
     }
 
-    @Override
+
     public void ejbPostCreate(String login, String password, String eMail, String phone, int role) throws CreateException {
 
     }
 
-    @Override
+
     public Integer ejbFindByName(String login, String password) throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -220,7 +220,7 @@ public class CustomerBean implements EntityBean {
         }
     }
 
-    @Override
+
     public void ejbHomeUpdateById(int id, String login, String password, String eMail, String phone, int role) {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -242,7 +242,7 @@ public class CustomerBean implements EntityBean {
         }
     }
 
-    @Override
+
     public Collection ejbFindAllCustomers() throws FinderException {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         System.out.println("Connected!");
