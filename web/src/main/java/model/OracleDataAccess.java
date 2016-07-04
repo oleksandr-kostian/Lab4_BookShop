@@ -46,10 +46,6 @@ public class OracleDataAccess implements ModelDataBase {
     private OracleDataAccess() {
     }
 
-    protected static class Singleton {
-        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
-    }
-
     public static OracleDataAccess getInstance() {
         return Singleton._INSTANCE;
     }
@@ -104,7 +100,6 @@ public class OracleDataAccess implements ModelDataBase {
             throw new DataBaseException("Can't update data due to RemoteException", e);
         }
     }
-
 
     @Override
     public void updateBookOfOrder(int idOrder, int idBook, int count) throws DataBaseException {
@@ -762,6 +757,7 @@ public class OracleDataAccess implements ModelDataBase {
         BookHome home = null;
         Book book;
         Context initial = null;
+
         try {
             initial = new InitialContext();
             Object objref = initial.lookup("BookEJB");
@@ -769,13 +765,17 @@ public class OracleDataAccess implements ModelDataBase {
         } catch (NamingException e) {
             throw new DataBaseException("Can't find object by name", e);
         }
+
         try {
             lId = (ArrayList<BookRemote>) home.findByName(name);
             for (int i = 0; i < lId.size(); i++) {
                 bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+
                 Item rubric = getRubricById(bookRemote.getParentId());
                 Author author = getAuthorById(bookRemote.getAuthor().getId());
-                book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+
+                book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(),
+                        rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
                 listBooks.add(book);
             }
         } catch (RemoteException e) {
@@ -828,16 +828,20 @@ public class OracleDataAccess implements ModelDataBase {
             Object remObj = context.lookup("OrderEJB");
             orHm = (OrderHome) PortableRemoteObject.narrow(remObj, OrderHome.class);
 
-            ArrayList<Integer> list = (ArrayList<Integer>) orHm.findOrderByIdCustomer(idCustomer);
+            ArrayList<OrderRemote> list = (ArrayList<OrderRemote>) orHm.findOrderByIdCustomer(idCustomer);
 
-            for (Integer id : list) {
-                listOr.add(getOrderById(id));
+            for (OrderRemote id : list) {
+                listOr.add(getOrderById(id.getIdOrder()));
             }
         } catch (RemoteException | NamingException | FinderException e) {
             throw new DataBaseException("Can't get order by id of customer", e);
         }
 
         return listOr;
+    }
+
+    protected static class Singleton {
+        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
     }
 
 }

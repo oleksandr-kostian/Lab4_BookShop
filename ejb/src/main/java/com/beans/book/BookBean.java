@@ -262,22 +262,21 @@ public class BookBean extends ItemBean implements EntityBean {
                 .replace("_", "!_")
                 .replace("[", "![");
         try {
-            statement = connection.prepareStatement(" \"SELECT i.ID_ITEM, i.NAME, rub.ID_ITEM AS \\\"RUBRIC\\\", a.ID_AUTHOR AS\\\"AUTHOR\\\",\\n\" +\n" +
-                    "            \"           p.PAGES, p.PRICE, p.AMOUNT, i.DESCRIPTION\\n\" +\n" +
-                    "            \"FROM ITEM i, PROPERTIES p, AUTHOR a, ITEM rub\\n\" +\n" +
-                    "            \"WHERE i.TYPE = 0\\n\" +\n" +
-                    "            \"      AND i.ID_PROPERTIES = p.ID_BOOK\\n\" +\n" +
-                    "            \"      AND p.ID_AUTHOR = a.ID_AUTHOR\\n\" +\n" +
-                    "            \"      AND i.PARENT_ID = rub.ID_ITEM\\n\" +\n" +
-                    "            \"      AND rub.TYPE = 1\\n\" +\n" +
-                    "            \"      AND lower(i.name || i.DESCRIPTION || a.NAME || a.SURNAME) like lower(?) ESCAPE '!'\"");
+            statement = connection.prepareStatement("SELECT i.ID_ITEM, i.NAME, rub.ID_ITEM AS \"RUBRIC\", a.ID_AUTHOR AS\"AUTHOR\",\n" +
+                    "           p.PAGES, p.PRICE, p.AMOUNT, i.DESCRIPTION\n" +
+                    "FROM ITEM i, PROPERTIES p, AUTHOR a, ITEM rub\n" +
+                    "WHERE i.TYPE = 0\n" +
+                    "      AND i.ID_PROPERTIES = p.ID_BOOK\n" +
+                    "      AND p.ID_AUTHOR = a.ID_AUTHOR\n" +
+                    "      AND i.PARENT_ID = rub.ID_ITEM\n" +
+                    "      AND rub.TYPE = 1\n" +
+                    "      AND lower(i.name || i.DESCRIPTION || a.NAME || a.SURNAME) like lower(?) ESCAPE '!'");
             statement.setString(1, "%" + name + "%");
             result = statement.executeQuery();
-            if (result.next()) {
+
+            while (result.next()) {
                 this.setIdItem(result.getInt("ID_ITEM"));
                 lBook.add(this.getIdItem());
-            } else {
-                throw new EJBException("Can't load data by id  due to SQLException");
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data by id  due to SQLException", e);

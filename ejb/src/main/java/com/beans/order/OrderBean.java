@@ -352,7 +352,8 @@ public class OrderBean implements EntityBean {
             result = statement.executeQuery();
 
             while (result.next()) {
-                list.add(result.getInt("ID_ORDER"));
+                this.idOrder = result.getInt("ID_ORDER");
+                list.add(this.idOrder);
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data by id  due to SQLException", e);
