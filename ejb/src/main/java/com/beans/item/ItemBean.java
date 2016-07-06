@@ -189,7 +189,7 @@ public class ItemBean implements EntityBean {
     }
 
     public void ejbLoad() throws EJBException {
-        System.out.println("ItemRemote bean method ejbLoad() was called.");
+        System.out.println("ItemRemote bean method ejbLoad() was called");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -206,6 +206,7 @@ public class ItemBean implements EntityBean {
                 this.description = result.getString("DESCRIPTION");
                 this.parentId = result.getInt("PARENT_ID");
             }
+            System.out.println("ItemRemote bean method ejbLoad() was called. For id=" + getIdItem());
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
         } finally {
@@ -224,15 +225,15 @@ public class ItemBean implements EntityBean {
                 statement.setString(1, getName());
                 statement.setString(2, getDescription());
                 statement.setInt(3, getIdItem());
-                statement.executeUpdate();
-                return;
+            } else {
+                statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
+                statement.setInt(1, getParentId());
+                statement.setString(2, getName());
+                statement.setString(3, getDescription());
+                statement.setInt(4, getIdItem());
             }
-            statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
-            statement.setInt(1, getParentId());
-            statement.setString(2, getName());
-            statement.setString(3, getDescription());
-            statement.setInt(4, getIdItem());
             statement.executeUpdate();
+            System.out.println("ItemRemote bean method ejbStore() was called. For id=" + getIdItem());
         } catch (SQLException e) {
             throw new EJBException("Can't store data due to exception", e);
         } finally {

@@ -563,15 +563,18 @@ public class OracleDataAccess implements ModelDataBase {
         }
         try {
             lId = (ArrayList<ItemRemote>) home.findAllSections();
+            //System.out.println("-1 size " + lId.size());
             for (int i = 0; i < lId.size(); i++) {
-                itemRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                //System.out.println("-2 i=" + i + " id " + lId.get(i).getIdItem());
+                itemRemote = home.findByPrimaryKeyForType(lId.get(i).getIdItem(), lId.get(i).getType());
+                //System.out.println("-3");
                 item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), null, Item.ItemType.Section);
                 lItems.add(item);
             }
         } catch (RemoteException e) {
-            throw new DataBaseException("Can't retrive data via RemoteException", e);
+            throw new DataBaseException("Can't retrieve data via RemoteException", e);
         } catch (FinderException e) {
-            throw new DataBaseException("Can't retrive data via FinderException", e);
+            throw new DataBaseException("Can't retrieve data via FinderException", e);
         }
         return lItems;
     }
@@ -601,9 +604,9 @@ public class OracleDataAccess implements ModelDataBase {
                 lBooks.add(book);
             }
         } catch (RemoteException e) {
-            throw new DataBaseException("Can't retrive data via RemoteException", e);
+            throw new DataBaseException("Can't retrieve data via RemoteException", e);
         } catch (FinderException e) {
-            throw new DataBaseException("Can't retrive data via FinderException", e);
+            throw new DataBaseException("Can't retrieve data via FinderException", e);
         }
         return lBooks;
     }
