@@ -1,12 +1,10 @@
 package com.beans.book;
 
-import com.beans.author.AuthorRemote;
+
 import com.beans.item.ItemBean;
 import com.connection.DataSourceConnection;
 
 import javax.ejb.*;
-import java.awt.print.Book;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,6 +54,8 @@ public class BookBean extends ItemBean implements EntityBean {
     }
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
+        System.out.println("BookRemote bean method ejbFindByPrimaryKey(Integer key) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -87,6 +87,7 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public void ejbRemove() throws RemoveException, EJBException {
         System.out.println("BookRemote bean method ejbRemove() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -113,6 +114,7 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public void ejbLoad() throws EJBException {
         System.out.println("BookRemote bean method ejbLoad() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -150,6 +152,7 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public void ejbStore() throws EJBException {
         System.out.println("BookRemote bean method ejbStore() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -183,6 +186,7 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public void ejbHomeUpdateById(Integer id, String name, int author, String description, Integer rubric, int pages, int price, int amount) {
         System.out.println("BookRemote bean method ejbHomeUpdateById() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -209,6 +213,8 @@ public class BookBean extends ItemBean implements EntityBean {
 
 
     public Integer ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
+        System.out.println("BookRemote bean method ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) was called.");
+
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -253,15 +259,18 @@ public class BookBean extends ItemBean implements EntityBean {
 
 
     public void ejbPostCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
-
+        System.out.println("BookRemote bean method ejbPostCreateBook was called.");
     }
 
 
     public Collection ejbFindByName(String name) throws FinderException {
+        System.out.println("BookRemote bean method ejbFindByName(String name) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
         List<Integer> lBook = new ArrayList<>();
+
         name = name.replace("!", "!!")
                 .replace("%", "!%")
                 .replace("_", "!_")
@@ -276,11 +285,13 @@ public class BookBean extends ItemBean implements EntityBean {
                     "      AND i.PARENT_ID = rub.ID_ITEM\n" +
                     "      AND rub.TYPE = 1\n" +
                     "      AND lower(i.name || i.DESCRIPTION || a.NAME || a.SURNAME) like lower(?) ESCAPE '!'");
+            System.out.println("-0");
             statement.setString(1, "%" + name + "%");
             result = statement.executeQuery();
-
+            System.out.println("-1");
             while (result.next()) {
                 this.setIdItem(result.getInt("ID_ITEM"));
+                System.out.println("-2");
                 lBook.add(this.getIdItem());
             }
         } catch (SQLException e) {
@@ -293,6 +304,8 @@ public class BookBean extends ItemBean implements EntityBean {
 
 
     public Collection ejbFindAllBooksByRubric(Integer id) throws FinderException {
+        System.out.println("BookRemote bean method ejbFindAllBooksByRubric was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -318,6 +331,8 @@ public class BookBean extends ItemBean implements EntityBean {
 
 
     public Collection ejbHomeGetAmountOfBooks(int amount) throws FinderException {
+        System.out.println("BookRemote bean method ejbHomeGetAmountOfBooks(int amount) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -344,12 +359,4 @@ public class BookBean extends ItemBean implements EntityBean {
         }
         return lBooks;
     }
-
-
-/*
-    @Override
-    public Integer getId() throws FinderException {
-        return this.getIdItem();
-    }
-    */
 }

@@ -49,6 +49,11 @@ public class OracleDataAccess implements ModelDataBase {
         return Singleton._INSTANCE;
     }
 
+    protected static class Singleton {
+        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
+    }
+    
+
     @Override
     public void updateBook(Book book) throws DataBaseException {
         Object objref = null;
@@ -591,7 +596,7 @@ public class OracleDataAccess implements ModelDataBase {
         Context initial = null;
         try {
             initial = new InitialContext();
-            Object objref = initial.lookup("ItemEJB");
+            Object objref = initial.lookup("BookEJB");
             home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
         } catch (NamingException e) {
             throw new DataBaseException("Can't find object by name", e);
@@ -851,10 +856,6 @@ public class OracleDataAccess implements ModelDataBase {
         }
 
         return listOr;
-    }
-
-    protected static class Singleton {
-        public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
     }
 
 }

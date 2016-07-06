@@ -51,6 +51,8 @@ public class CustomerBean implements EntityBean {
     }
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
+        System.out.println("CustomerRemote bean method ejbFindByPrimaryKey(Integer key) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -73,14 +75,18 @@ public class CustomerBean implements EntityBean {
     }
 
     public void setEntityContext(EntityContext entityContext) throws EJBException {
+        System.out.println("CustomerRemote bean context was set.");
         this.context = entityContext;
     }
 
     public void unsetEntityContext() throws EJBException {
+        System.out.println("CustomerRemote bean context was unset.");
         this.context = null;
     }
 
     public void ejbRemove() throws RemoveException, EJBException {
+        System.out.println("CustomerRemote bean method ejbRemove() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -98,13 +104,17 @@ public class CustomerBean implements EntityBean {
     }
 
     public void ejbActivate() throws EJBException {
+        System.out.println("CustomerRemote bean was activated.");
         this.id = (Integer) context.getPrimaryKey();
     }
 
     public void ejbPassivate() throws EJBException {
+        System.out.println("CustomerRemote bean was passivated.");
     }
 
     public void ejbLoad() throws EJBException {
+        System.out.println("CustomerRemote bean method ejbLoad() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -130,6 +140,8 @@ public class CustomerBean implements EntityBean {
     }
 
     public void ejbStore() throws EJBException {
+        System.out.println("CustomerRemote bean method ejbStore() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -157,6 +169,8 @@ public class CustomerBean implements EntityBean {
 
 
     public Integer ejbCreate(String login, String password, String eMail, String phone, int role) throws CreateException {
+        System.out.println("CustomerRemote bean method ejbCreate(String login, String password, String eMail, String phone, int role) was called.");
+
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -194,11 +208,13 @@ public class CustomerBean implements EntityBean {
 
 
     public void ejbPostCreate(String login, String password, String eMail, String phone, int role) throws CreateException {
-
+        System.out.println("CustomerRemote bean method ejbPostCreate was called.");
     }
 
 
     public Integer ejbFindByName(String login, String password) throws FinderException {
+        System.out.println("CustomerRemote bean method ejbFindByName(String login, String password) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -222,6 +238,8 @@ public class CustomerBean implements EntityBean {
 
 
     public void ejbHomeUpdateById(int id, String login, String password, String eMail, String phone, int role) {
+        System.out.println("CustomerRemote bean method ejbHomeUpdateById(int id, String login, String password, String eMail, String phone, int role) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -244,6 +262,8 @@ public class CustomerBean implements EntityBean {
 
 
     public Collection ejbFindAllCustomers() throws FinderException {
+        System.out.println("CustomerRemote bean method ejbFindAllCustomers() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         System.out.println("Connected!");
         ResultSet result = null;

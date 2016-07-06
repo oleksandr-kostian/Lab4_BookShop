@@ -49,6 +49,8 @@ public class AuthorBean implements EntityBean {
     }
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
+        System.out.println("AuthorRemote bean method ejbFindByPrimaryKey(Integer key) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -71,14 +73,18 @@ public class AuthorBean implements EntityBean {
     }
 
     public void setEntityContext(EntityContext entityContext) throws EJBException {
+        System.out.println("AuthorRemote bean context was set.");
         this.context = entityContext;
     }
 
     public void unsetEntityContext() throws EJBException {
+        System.out.println("AuthorRemote bean context was unset.");
         this.context = null;
     }
 
     public void ejbRemove() throws RemoveException, EJBException {
+        System.out.println("AuthorRemote bean method ejbRemove() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -96,13 +102,17 @@ public class AuthorBean implements EntityBean {
     }
 
     public void ejbActivate() throws EJBException {
+        System.out.println("AuthorRemote bean was activated.");
         this.id = (Integer) context.getPrimaryKey();
     }
 
     public void ejbPassivate() throws EJBException {
+        System.out.println("AuthorRemote bean was passivated.");
     }
 
     public void ejbLoad() throws EJBException {
+        System.out.println("AuthorRemote bean method ejbLoad() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -125,6 +135,8 @@ public class AuthorBean implements EntityBean {
     }
 
     public void ejbStore() throws EJBException {
+        System.out.println("AuthorRemote bean method ejbStore( was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -144,6 +156,8 @@ public class AuthorBean implements EntityBean {
 
 
     public Integer ejbCreate(String name,String surname) throws CreateException {
+        System.out.println("AuthorRemote bean method ejbCreate(String name,String surname) was called.");
+
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -175,10 +189,13 @@ public class AuthorBean implements EntityBean {
 
 
     public void ejbPostCreate(String name, String surname) throws CreateException {
+        System.out.println("AuthorRemote bean method ejbPostCreate(String name, String surname) was called.");
     }
 
 
     public Collection ejbFindAllAuthors() throws FinderException {
+        System.out.println("AuthorRemote bean method ejbFindAllAuthors() was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         System.out.println("Connected!");
         ResultSet result = null;
@@ -202,6 +219,8 @@ public class AuthorBean implements EntityBean {
 
 
     public void ejbHomeUpdateById(int id,String surname, String name) {
+        System.out.println("AuthorRemote bean method ejbHomeUpdateById(int id,String surname, String name) was called.");
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
