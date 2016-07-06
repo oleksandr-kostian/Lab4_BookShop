@@ -23,7 +23,7 @@ public class ItemBean implements EntityBean {
     private String name;
     private String description;
     private ItemType type;
-    private int parentId;
+    protected int parentId;
 
     private String selectItemByType;
 
@@ -132,6 +132,8 @@ public class ItemBean implements EntityBean {
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
+            System.out.println("query "+ getSelectItemByType());
+
             statement = connection.prepareStatement(getSelectItemByType());
             statement.setInt(1, key);
             result = statement.executeQuery();

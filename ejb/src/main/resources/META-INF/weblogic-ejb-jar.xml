@@ -11,7 +11,15 @@
         <jndi-name>CustomerEJB</jndi-name>
     </weblogic-enterprise-bean>
     <weblogic-enterprise-bean>
+        <ejb-name>ItemEJB</ejb-name>
+        <jndi-name>ItemEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
         <ejb-name>AuthorEJB</ejb-name>
         <jndi-name>AuthorEJB</jndi-name>
+    </weblogic-enterprise-bean>
+    <weblogic-enterprise-bean>
+        <ejb-name>BookEJB</ejb-name>
+        <jndi-name>BookEJB</jndi-name>
     </weblogic-enterprise-bean>
 </weblogic-ejb-jar>

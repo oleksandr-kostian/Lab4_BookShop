@@ -21,9 +21,10 @@ public interface BookRemote extends EJBObject {
 
     int getPages() throws RemoteException, FinderException;
 
-    AuthorRemote getAuthor() throws RemoteException, FinderException;
+    //AuthorRemote getAuthor() throws RemoteException, FinderException;
+    int getAuthorID() throws RemoteException, FinderException;
 
-    Integer getIdItem() throws RemoteException, FinderException;
+    int getIdItem() throws RemoteException, FinderException;
 
     String getName() throws RemoteException, FinderException;
 
@@ -31,7 +32,7 @@ public interface BookRemote extends EJBObject {
 
     ItemBean.ItemType getType() throws RemoteException, FinderException;
 
-    Integer getParentId() throws RemoteException, FinderException;
+    int getParentId() throws RemoteException, FinderException;
 
 
 }

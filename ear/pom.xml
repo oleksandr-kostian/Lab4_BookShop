@@ -10,12 +10,9 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ear</artifactId>
-    <groupId>Lab4_BookShop_GroupID</groupId>
     <packaging>ear</packaging>
-
-    <name />
     <version>0.0.1-SNAPSHOT</version>
-    <description />
+
 
     <dependencies>
         <dependency>
@@ -96,6 +93,8 @@
                 </executions>
             </plugin>
         </plugins>
+
+
     </build>
 
 </project>

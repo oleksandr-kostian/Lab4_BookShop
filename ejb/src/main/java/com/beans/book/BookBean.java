@@ -21,7 +21,9 @@ import static java.lang.Math.toIntExact;
  * Created by Veleri on 01.07.2016.
  */
 public class BookBean extends ItemBean implements EntityBean {
-    private AuthorRemote author;
+    //private AuthorRemote author;
+    private int authorID;
+
     private int pages;
     private int price;
     private int amount;
@@ -42,13 +44,15 @@ public class BookBean extends ItemBean implements EntityBean {
         return pages;
     }
 
-    public AuthorRemote getAuthor() {
+    /*public AuthorRemote getAuthor() {
         return author;
+    }*/
+    public int getAuthorID() {
+        return authorID;
     }
 
-
     public int getParentId()  {
-        return this.getParentId();
+        return parentId;
     }
 
     public Integer ejbFindByPrimaryKey(Integer key) throws FinderException {
@@ -108,7 +112,7 @@ public class BookBean extends ItemBean implements EntityBean {
     }
 
     public void ejbLoad() throws EJBException {
-        System.out.println("ItemRemote bean method ejbLoad() was called.");
+        System.out.println("BookRemote bean method ejbLoad() was called.");
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
@@ -127,11 +131,12 @@ public class BookBean extends ItemBean implements EntityBean {
                 this.setName(result.getString("NAME"));
                 this.setDescription(result.getString("DESCRIPTION"));
                 this.setParentId(result.getInt("RUBRIC"));
-                try {
-                    this.author.setId(result.getInt("AUTHOR"));
-                } catch (RemoteException e) {
+                //try {
+                    this.authorID = result.getInt("AUTHOR");
+               /* } catch (RemoteException e) {
+                    System.out.println("1.2");
                     throw new EJBException("RemoteException", e);
-                }
+                }*/
                 this.pages = result.getInt("PAGES");
                 this.price = result.getInt("PRICE");
                 this.amount = result.getInt("AMOUNT");
@@ -156,11 +161,11 @@ public class BookBean extends ItemBean implements EntityBean {
             statement.setInt(4, getIdItem());
             statement.executeUpdate();
             statement = connection.prepareStatement("UPDATE PROPERTIES SET ID_AUTHOR=?,PAGES=?,PRICE=?,AMOUNT=? WHERE ID_BOOK=?");
-            try {
-                statement.setInt(1, getAuthor().getId());
-            } catch (RemoteException e) {
+            //try {
+                statement.setInt(1, getAuthorID());
+            /*} catch (RemoteException e) {
                 throw new EJBException("RemoteException", e);
-            }
+            }*/
             statement.setInt(2, getPages());
             statement.setInt(3, getPrice());
             statement.setInt(4, getAmount());
@@ -228,11 +233,11 @@ public class BookBean extends ItemBean implements EntityBean {
                 this.setDescription(description);
                 this.setType(ItemType.Book);
                 this.setParentId(rubricId);
-                try {
-                    this.author.setId(authorId);
-                } catch (RemoteException e) {
+                //try {
+                    this.authorID = authorId;
+                /*} catch (RemoteException e) {
                     throw new EJBException("RemoteException", e);
-                }
+                }*/
                 this.pages = pages;
                 this.price = price;
                 this.amount = amount;

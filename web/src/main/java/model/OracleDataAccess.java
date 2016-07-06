@@ -596,7 +596,7 @@ public class OracleDataAccess implements ModelDataBase {
             for (int i = 0; i < lId.size(); i++) {
                 bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
                 Item rubric = getRubricById(bookRemote.getParentId());
-                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                Author author = getAuthorById(bookRemote.getAuthorID());
                 book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
                 lBooks.add(book);
             }
@@ -611,24 +611,25 @@ public class OracleDataAccess implements ModelDataBase {
     @Override
     public List<Book> getAmountOfBooks(int amount) throws DataBaseException {
         List<Book> lBooks = new ArrayList<>();
-        ArrayList<BookRemote> lId;
+        ArrayList<Integer> lId;
         BookRemote bookRemote;
         Book book;
         BookHome home = null;
         Context initial = null;
         try {
             initial = new InitialContext();
-            Object objref = initial.lookup("ItemEJB");
+            Object objref = initial.lookup("BookEJB");
             home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
         } catch (NamingException e) {
             throw new DataBaseException("Can't find object by name", e);
         }
         try {
-            lId = (ArrayList<BookRemote>) home.getAmountOfBooks(amount);
+            lId = (ArrayList<Integer>) home.getAmountOfBooks(amount);
+            System.out.println("amount of books "+ lId.size());
             for (int i = 0; i < lId.size(); i++) {
-                bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                bookRemote = home.findByPrimaryKey(lId.get(i));
                 Item rubric = getRubricById(bookRemote.getParentId());
-                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                Author author = getAuthorById(bookRemote.getAuthorID());
                 book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
                 lBooks.add(book);
             }
@@ -650,7 +651,7 @@ public class OracleDataAccess implements ModelDataBase {
             BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
             bookRemote = home.findByPrimaryKey(bookId);
             Item rubric = getRubricById(bookRemote.getParentId());
-            Author author = getAuthorById(bookRemote.getAuthor().getId());
+            Author author = getAuthorById(bookRemote.getAuthorID());
             book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
         } catch (Exception e) {
             throw new DataBaseException("Can't get customer by id", e);
@@ -723,7 +724,9 @@ public class OracleDataAccess implements ModelDataBase {
             Context initial = new InitialContext();
             Object objref = initial.lookup("ItemEJB");
             ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
-            itemRemote = home.findByPrimaryKey(rubricId);
+
+            itemRemote = home.findByPrimaryKeyForType(rubricId, ItemBean.ItemType.Rubric);
+
             Item parent = getSectionById(itemRemote.getParentId());
             item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), parent, Item.ItemType.Rubric);
         } catch (Exception e) {
@@ -740,8 +743,13 @@ public class OracleDataAccess implements ModelDataBase {
             Context initial = new InitialContext();
             Object objref = initial.lookup("ItemEJB");
             ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
-            itemRemote = home.findByPrimaryKey(sectionId);
-            item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), null, Item.ItemType.Section);
+
+            itemRemote = home.findByPrimaryKeyForType(sectionId, ItemBean.ItemType.Section);
+
+            System.out.println("itemRemote.getIdItem()" + itemRemote.getIdItem());
+            item = new Item(itemRemote.getIdItem(), itemRemote.getName(),
+                    itemRemote.getDescription(), null, Item.ItemType.Section);
+            System.out.println("2");
         } catch (Exception e) {
             throw new DataBaseException("Can't get author by id", e);
         }
@@ -771,7 +779,7 @@ public class OracleDataAccess implements ModelDataBase {
                 bookRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
 
                 Item rubric = getRubricById(bookRemote.getParentId());
-                Author author = getAuthorById(bookRemote.getAuthor().getId());
+                Author author = getAuthorById(bookRemote.getAuthorID());
 
                 book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(),
                         rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
