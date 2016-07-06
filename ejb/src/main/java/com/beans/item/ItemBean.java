@@ -132,8 +132,6 @@ public class ItemBean implements EntityBean {
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
-            System.out.println("query "+ getSelectItemByType());
-
             statement = connection.prepareStatement(getSelectItemByType());
             statement.setInt(1, key);
             result = statement.executeQuery();
@@ -221,6 +219,14 @@ public class ItemBean implements EntityBean {
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
+            if (getParentId() == 0) {
+                statement = connection.prepareStatement("UPDATE ITEM SET NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
+                statement.setString(1, getName());
+                statement.setString(2, getDescription());
+                statement.setInt(3, getIdItem());
+                statement.executeUpdate();
+                return;
+            }
             statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ?");
             statement.setInt(1, getParentId());
             statement.setString(2, getName());

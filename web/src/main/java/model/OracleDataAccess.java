@@ -745,11 +745,8 @@ public class OracleDataAccess implements ModelDataBase {
             ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
 
             itemRemote = home.findByPrimaryKeyForType(sectionId, ItemBean.ItemType.Section);
-
-            System.out.println("itemRemote.getIdItem()" + itemRemote.getIdItem());
             item = new Item(itemRemote.getIdItem(), itemRemote.getName(),
                     itemRemote.getDescription(), null, Item.ItemType.Section);
-            System.out.println("2");
         } catch (Exception e) {
             throw new DataBaseException("Can't get author by id", e);
         }
