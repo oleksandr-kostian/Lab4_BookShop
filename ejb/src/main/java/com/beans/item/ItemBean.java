@@ -131,6 +131,7 @@ public class ItemBean implements EntityBean {
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
+        System.out.println("find key " + key + "; qur= " + getSelectItemByType());
         try {
             statement = connection.prepareStatement(getSelectItemByType());
             statement.setInt(1, key);

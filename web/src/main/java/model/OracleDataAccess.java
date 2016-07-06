@@ -533,7 +533,9 @@ public class OracleDataAccess implements ModelDataBase {
         try {
             lId = (ArrayList<ItemRemote>) home.findAllRubirc();
             for (int i = 0; i < lId.size(); i++) {
-                itemRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                //itemRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                itemRemote = home.findByPrimaryKeyForType(lId.get(i).getIdItem(), ItemBean.ItemType.Rubric);
+
                 Item parent = getSectionById(itemRemote.getParentId());
                 item = new Item(itemRemote.getIdItem(), itemRemote.getName(), itemRemote.getDescription(), parent, Item.ItemType.Rubric);
                 lItems.add(item);
@@ -811,8 +813,12 @@ public class OracleDataAccess implements ModelDataBase {
         }
         try {
             lId = (ArrayList<ItemRemote>) home.findAllRubricBySection(id);
+            System.out.println("id "+id);
             for (int i = 0; i < lId.size(); i++) {
-                rubricRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                //rubricRemote = home.findByPrimaryKey(lId.get(i).getIdItem());
+                rubricRemote = home.findByPrimaryKeyForType(lId.get(i).getIdItem(),
+                        ItemBean.ItemType.Rubric);
+
                 Item section = getSectionById(rubricRemote.getParentId());
                 item = new Item(rubricRemote.getIdItem(), rubricRemote.getName(), rubricRemote.getDescription(), section, Item.ItemType.Rubric);
                 lrubrics.add(item);
