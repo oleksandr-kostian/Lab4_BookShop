@@ -353,6 +353,7 @@ public class OrderBean implements EntityBean {
 
             while (result.next()) {
                 this.idOrder = result.getInt("ID_ORDER");
+                System.out.println("ejbFindOrderByIdCustomer id=" + idOrder);
                 list.add(this.idOrder);
             }
         } catch (SQLException e) {

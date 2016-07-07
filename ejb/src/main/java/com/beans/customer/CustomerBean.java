@@ -3,6 +3,7 @@ package com.beans.customer;
 import com.connection.DataSourceConnection;
 
 import javax.ejb.*;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -130,6 +131,7 @@ public class CustomerBean implements EntityBean {
                 this.eMail = result.getString("E_MAIL");
                 this.phone = result.getString("PHOME_NUBMER");
                 this.role = result.getInt("ROLE");
+                System.out.println("Customer load with " + id+" "+login+" "+password+" "+eMail+" "+phone+" "+role);
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
@@ -212,8 +214,9 @@ public class CustomerBean implements EntityBean {
     }
 
 
-    public Integer ejbFindByName(String login, String password) throws FinderException {
-        System.out.println("CustomerRemote bean method ejbFindByName(String login, String password) was called.");
+    public Integer ejbFindByName(String login, String password) throws FinderException, IOException {
+        System.out.println("CustomerRemote bean method ejbFindByName(String login, String password) was called," +
+                " "+login+" "+password);
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -224,9 +227,11 @@ public class CustomerBean implements EntityBean {
             statement.setString(2, password);
             result = statement.executeQuery();
             if(result.next()) {
-                return id;
+                int i = result.getInt("ID_CUSTOMER");
+                System.out.println("Customer found "+login+" with id=" + i);
+                return i;
             } else {
-                throw new EJBException("Can't load data by id  due to SQLException");
+                throw new IOException("Customer did not find");
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data by id  due to SQLException", e);

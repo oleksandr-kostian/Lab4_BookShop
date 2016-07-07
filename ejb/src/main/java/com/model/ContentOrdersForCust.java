@@ -1,6 +1,8 @@
 package com.model;
 
-public class ContentOrdersForCust {
+import java.io.Serializable;
+
+public class ContentOrdersForCust implements Serializable{
 
     private Integer idBook;
     private Integer amount;

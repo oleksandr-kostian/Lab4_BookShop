@@ -33,7 +33,7 @@ public class AddCustomer implements GeneralProcess {
         String password = request.getParameter(CUS_PASSWORD);
         String phone = request.getParameter(CUS_PHONE);
         Customer cusWithId  = OracleDataAccess.getInstance().getCustomer(login,password);
-        if(phone.length()<13 && cusWithId==null) {
+        if(phone.length()<13 && cusWithId == null) {
             String eMail = request.getParameter(CUS_E_MAIL);
             int role = 1;
             Customer cus = new Customer(login, password, eMail, phone, role);
