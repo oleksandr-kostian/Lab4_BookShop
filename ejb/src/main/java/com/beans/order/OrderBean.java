@@ -104,26 +104,44 @@ public class OrderBean implements EntityBean {
     }
 
     public void ejbRemove() throws RemoveException, EJBException {
+
+
+        /*
+        Method are rewriting now
+         */
+
         System.out.println("OrderRemote bean method ejbRemove() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
 
+        System.out.println("-1 idOrder=" + this.getIdOrder());
+
         try {
-            statement = connection.prepareStatement("DELETE ORDERS WHERE ID_ORDER = ?");
+            statement = connection.prepareStatement("DELETE ORDERS WHERE ID_ORDER = ?");  //????????????????????
             statement.setInt(1, this.getIdOrder());
+
+            System.out.println("-2");
+
             statement.execute();
             statement = null;
             result = null;
 
-            for(int i = 1; i <= this.getContents().size() - 1; i++){
+            System.out.println("-2.1");
+            System.out.println("-3 size="+this.getContents().size());
+
+            for(int i = 1; i < this.getContents().size(); i++){
+                System.out.println("-3.1");
+
                 statement = connection.prepareStatement("DELETE CONTENR_ORDER WHERE ID_ORDER = ?");
                 statement.setInt(1, this.getIdOrder());
                 statement.execute();
                 statement = null;
-            }
 
+                System.out.println("-3.1---");
+            }
+            System.out.println("-4");
         } catch (SQLException e) {
             throw new EJBException("Can't delete data", e);
         } finally {
@@ -224,13 +242,13 @@ public class OrderBean implements EntityBean {
 
         try {
             statement = connection.prepareStatement("{call  ADDORDER(?,?,?,?)}");
-
+            //System.out.println("-1 " + customerRemote.getId() +" "+con.get(0).getIDBook()+" "+con.get(0).getAmount());
             statement.setInt(1, customerRemote.getId());
             statement.setInt(2, con.get(0).getIDBook());
             statement.setInt(3, con.get(0).getAmount());
             statement.setDate(4, (java.sql.Date) dateOfOrder);
-
             statement.execute();
+
             statement = null;
             result = null;
 
@@ -244,7 +262,8 @@ public class OrderBean implements EntityBean {
                 this.setContents(con);
             }
             statement = null;
-            for(int i = 1; i <= this.getContents().size() - 1; i++){
+
+            for(int i = 1; i < this.getContents().size(); i++){
                 statement = connection.prepareStatement("INSERT INTO CONTENR_ORDER(ID_ORDER, ID_BOOK, AMOUNT) values(?,?,?)");
                 statement.setInt(1, this.getIdOrder());
                 statement.setInt(2, this.getContents().get(i).getIDBook());
@@ -259,7 +278,7 @@ public class OrderBean implements EntityBean {
         } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
-        return id;
+        return idOrder;
     }
 
 

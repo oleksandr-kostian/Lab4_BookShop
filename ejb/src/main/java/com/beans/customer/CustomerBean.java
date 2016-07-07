@@ -201,8 +201,7 @@ public class CustomerBean implements EntityBean {
             }
         } catch (SQLException e) {
             throw new EJBException("Can't create new data due to SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
         return id;

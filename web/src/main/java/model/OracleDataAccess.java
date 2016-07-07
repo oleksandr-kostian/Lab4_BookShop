@@ -22,12 +22,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-import javax.swing.text.AbstractDocument;
+import java.io.IOException;
 import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +48,7 @@ public class OracleDataAccess implements ModelDataBase {
     protected static class Singleton {
         public static final OracleDataAccess _INSTANCE = new OracleDataAccess();
     }
-    
+
 
     @Override
     public void updateBook(Book book) throws DataBaseException {
@@ -438,13 +434,19 @@ public class OracleDataAccess implements ModelDataBase {
     @Override
     public Customer getCustomer(String login, String password) throws DataBaseException {
         CustomerRemote customerRemote;
-        Customer customer;
+        Customer customer = null;
         try {
             Context initial = new InitialContext();
             Object objref = initial.lookup("CustomerEJB");
             CustomerHome home = (CustomerHome) PortableRemoteObject.narrow(objref, CustomerHome.class);
-            customerRemote = home.findByName(login, password);
-            customer = new Customer(customerRemote.getId(), customerRemote.getLogin(), customerRemote.getPassword(), customerRemote.geteMail(), customerRemote.getPhone(), customerRemote.getRole());
+            try {
+                customerRemote = home.findByName(login, password);
+                customer = new Customer(customerRemote.getId(), customerRemote.getLogin(),
+                        customerRemote.getPassword(), customerRemote.geteMail(),
+                        customerRemote.getPhone(), customerRemote.getRole());
+            } catch (IOException e) {
+                customer = null;
+            }
         } catch (Exception e) {
             throw new DataBaseException("Can't get customer by id", e);
         }
