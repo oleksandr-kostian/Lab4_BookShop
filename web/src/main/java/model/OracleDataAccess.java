@@ -239,7 +239,7 @@ public class OracleDataAccess implements ModelDataBase {
         }
         ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
         try {
-            home.createItem(section.getName(), section.getDescription(), section.getParent().getId(), ItemBean.ItemType.Section);
+            home.createItem(section.getName(), section.getDescription(), -100, ItemBean.ItemType.Section);
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {
@@ -359,7 +359,7 @@ public class OracleDataAccess implements ModelDataBase {
         ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
         try {
             try {
-                home.findByPrimaryKey(rubricId);
+                home.findByPrimaryKeyForType(rubricId, ItemBean.ItemType.Rubric);
             } catch (FinderException e) {
                 throw new DataBaseException("Can't delete data due to FinderException", e);
             }
@@ -384,7 +384,7 @@ public class OracleDataAccess implements ModelDataBase {
         ItemHome home = (ItemHome) PortableRemoteObject.narrow(objref, ItemHome.class);
         try {
             try {
-                home.findByPrimaryKey(sectionId);
+                home.findByPrimaryKeyForType(sectionId, ItemBean.ItemType.Section);
             } catch (FinderException e) {
                 throw new DataBaseException("Can't delete data due to FinderException", e);
             }

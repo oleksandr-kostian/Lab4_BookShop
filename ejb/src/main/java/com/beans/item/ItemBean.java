@@ -243,7 +243,7 @@ public class ItemBean implements EntityBean {
     }
 
 
-    public Integer ejbCreateItem(String name, String description, int parentId, ItemType type) throws CreateException {
+    public Integer ejbCreateItem(String name, String description, int parId, ItemType type) throws CreateException {
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
@@ -254,17 +254,22 @@ public class ItemBean implements EntityBean {
                 sqlQuery = "INSERT INTO ITEM(NAME,PARENT_ID,DESCRIPTION,TYPE) values(?,?,?,1)";
                 break;
             case Section:
-                sqlQuery = "INSERT INTO ITEM(NAME,PARENT_ID,DESCRIPTION,TYPE) values(?,null,?,2)";
+                sqlQuery = "INSERT INTO ITEM(NAME,PARENT_ID,DESCRIPTION,TYPE) values(?,?,?,2)";
                 break;
         }
         try {
             statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, name);
+
             if (type.equals(ItemType.Rubric)) {
-                statement.setInt(2, parentId);
+                statement.setInt(2, parId);
+            } else {
+                statement.setString(2, null);
             }
+
             statement.setString(3, description);
             statement.execute();
+
             result = statement.getGeneratedKeys();
             System.out.println("Auto Generated Primary Key 1: " + result.toString());
             if (result.next()) {
