@@ -175,12 +175,14 @@ public class OrderBean implements EntityBean {
                 statement = connection.prepareStatement("SELECT ID_BOOK, AMOUNT FROM CONTENR_ORDER WHERE ID_ORDER=?");
                 statement.setInt(1, this.getIdOrder());
                 result = statement.executeQuery();
+
+                ArrayList<ContentOrdersForCust> conn = new ArrayList<>();
                 while (result.next()) {
                     int idBook = result.getInt("ID_BOOK");
                     int amount = result.getInt("AMOUNT");
-
-                    this.getContents().add(new ContentOrdersForCust(idBook, amount));
+                    conn.add(new ContentOrdersForCust(idBook, amount));
                 }
+                this.setContents(conn);
             }
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
