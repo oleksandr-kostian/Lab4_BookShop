@@ -218,8 +218,13 @@ public class OrderBean implements EntityBean {
 
     public Integer ejbCreate(Integer id, CustomerRemote customerRemote, Date dateOfOrder, ArrayList<ContentOrdersForCust> con)
             throws CreateException {
+
         System.out.println("OrderRemote bean method ejbCreate(Integer id, Customer Customer, Date dateOfOrder, ArrayList<ContentOrdersForCust> con) was called.");
 
+        if (customerRemote == null || dateOfOrder == null || con == null) {
+            throw new CreateException("Input value do not correct");
+        }
+        
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
