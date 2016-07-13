@@ -224,7 +224,7 @@ public class OrderBean implements EntityBean {
         if (customerRemote == null || dateOfOrder == null || con == null) {
             throw new CreateException("Input value do not correct");
         }
-        
+
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;

@@ -3,7 +3,6 @@ package com.beans.item;
 import com.connection.DataSourceConnection;
 
 import javax.ejb.*;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -201,7 +201,7 @@ public class OracleDataAccess implements ModelDataBase {
         }
         AuthorHome home = (AuthorHome) PortableRemoteObject.narrow(objref, AuthorHome.class);
         try {
-            home.create(author.getSurname(), author.getName());
+            home.create(author.getName(), author.getSurname());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't insert new data due to RemoteException", e);
         } catch (CreateException e) {

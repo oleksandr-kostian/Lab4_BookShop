@@ -214,13 +214,17 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public Integer ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
         System.out.println("BookRemote bean method ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) was called.");
+        //System.out.println("-1 name "+name+" ,des "+description+" ,rub "+rubricId+" ,aut "+authorId+" ,pag "+pages+" ,prc "+price
+        //+" ,amount "+amount);
 
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
+
         try {
-            statement = connection.prepareStatement("{call ADDBOOK(?,?,?,?,?,?,?)}");
+            statement = connection.prepareStatement("{call ADDBOOK(?,?,?,?,?,?,?)}", statement.RETURN_GENERATED_KEYS);
+
             statement.setString(1, name);
             statement.setString(2, description);
             statement.setInt(3, rubricId);
@@ -229,25 +233,24 @@ public class BookBean extends ItemBean implements EntityBean {
             statement.setInt(6, price);
             statement.setInt(7, amount);
             statement.execute();
+
             result = statement.getGeneratedKeys();
-            System.out.println("Auto Generated Primary Key 1: " + result.toString());
+
             if (result.next()) {
                 k = result.getLong(1);
-                System.out.println("Auto Generated Primary Key " + k);
+                System.out.println("Auto Generated Primary Key from resultSet k=" + k);
+
                 this.setIdItem(toIntExact(k));
                 this.setName(name);
                 this.setDescription(description);
                 this.setType(ItemType.Book);
                 this.setParentId(rubricId);
-                //try {
-                    this.authorID = authorId;
-                /*} catch (RemoteException e) {
-                    throw new EJBException("RemoteException", e);
-                }*/
+                this.authorID = authorId;
                 this.pages = pages;
                 this.price = price;
                 this.amount = amount;
-                System.out.println("Auto Generated Primary Key int " + getIdItem());
+
+                System.out.println("IdItem for new book =" + getIdItem());
             }
         } catch (SQLException e) {
             throw new EJBException("Can't create new data due to SQLException", e);

@@ -155,33 +155,47 @@ public class AuthorBean implements EntityBean {
     }
 
 
-    public Integer ejbCreate(String name,String surname) throws CreateException {
+    public Integer ejbCreate(String name, String surname) throws CreateException {
         System.out.println("AuthorRemote bean method ejbCreate(String name,String surname) was called.");
+        //System.out.println("CR AUTH "+ name +"  "+ surname);
 
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("INSERT INTO AUTHOR(SURNAME,NAME) values(?,?)");
+            statement = connection.prepareStatement("INSERT INTO AUTHOR(SURNAME,NAME) values(?,?)",
+                    statement.RETURN_GENERATED_KEYS);
             statement.setString(1, surname);
             statement.setString(2, name);
-            statement.execute();
-            result = statement.getGeneratedKeys();
-            System.out.println("Auto Generated Primary Key 1: " + result.toString());
+            statement.executeUpdate();
+
+            /*result = statement.getGeneratedKeys();
             if (result.next()) {
                 k = result.getLong(1);
                 System.out.println("Auto Generated Primary Key " + k);
+
                 this.id = toIntExact(k);
                 this.surname = surname;
                 this.name = name;
 
                 System.out.println("Auto Generated Primary Key int " + id);
             }
+            */
+
+            statement = null;
+            result = null;
+
+            statement = connection.prepareStatement("SELECT MAX(ID_AUTHOR) FROM  AUTHOR");
+            result = statement.executeQuery();
+            while (result.next()) {
+                this.id = result.getInt("MAX(ID_AUTHOR)");
+                this.surname = surname;
+                this.name = name;
+            }
         } catch (SQLException e) {
             throw new EJBException("Can't create new data due to SQLException", e);
-        }
-        finally {
+        } finally {
             DataSourceConnection.getInstance().disconnect(connection, result, statement);
         }
         return id;
@@ -197,7 +211,7 @@ public class AuthorBean implements EntityBean {
         System.out.println("AuthorRemote bean method ejbFindAllAuthors() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
-        System.out.println("Connected!");
+
         ResultSet result = null;
         PreparedStatement statement = null;
         List<Integer> lAuthors = new ArrayList<Integer>();

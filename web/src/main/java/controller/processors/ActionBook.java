@@ -66,8 +66,8 @@ abstract class ActionBook implements GeneralProcess{
         List<Item> listItem = OracleDataAccess.getInstance().getAllRubric();
 
         Item rubric = null;
-        for(Item item:listItem){
-            if(item.getName().equals(rubricName)){
+        for(Item item : listItem){
+            if(item != null && item.getName() != null && item.getName().equals(rubricName)){
                 rubric = item;
             }
         }
