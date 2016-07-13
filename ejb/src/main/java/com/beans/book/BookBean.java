@@ -133,16 +133,15 @@ public class BookBean extends ItemBean implements EntityBean {
                 this.setName(result.getString("NAME"));
                 this.setDescription(result.getString("DESCRIPTION"));
                 this.setParentId(result.getInt("RUBRIC"));
-                //try {
-                    this.authorID = result.getInt("AUTHOR");
-               /* } catch (RemoteException e) {
-                    System.out.println("1.2");
-                    throw new EJBException("RemoteException", e);
-                }*/
+                this.authorID = result.getInt("AUTHOR");
                 this.pages = result.getInt("PAGES");
                 this.price = result.getInt("PRICE");
                 this.amount = result.getInt("AMOUNT");
             }
+            System.out.println("BookRemote bean method ejbLoad() idAuthor="+getAuthorID()+" pages="+getPages()
+                    +" price="+getPrice()+" amount="+ getAmount());
+            System.out.println("BookRemote bean method ejbLoad() parID "+getParentId()+" name "+getName()
+                    +" desc "+getDescription()+" idItem "+getIdItem());
         } catch (SQLException e) {
             throw new EJBException("Can't load data due to SQLException", e);
         } finally {
@@ -157,24 +156,33 @@ public class BookBean extends ItemBean implements EntityBean {
         ResultSet result = null;
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ? AND TYPE = 0");
+            statement = connection.
+                    prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ? AND TYPE = 0");
+            System.out.println("BookRemote bean method ejbStore() parID "+getParentId()+" name "+getName()
+                    +" desc "+getDescription()+" idItem "+getIdItem());
             statement.setInt(1, getParentId());
             statement.setString(2, getName());
             statement.setString(3, getDescription());
             statement.setInt(4, getIdItem());
             statement.executeUpdate();
-            statement = connection.prepareStatement("UPDATE PROPERTIES SET ID_AUTHOR=?,PAGES=?,PRICE=?,AMOUNT=? WHERE ID_BOOK=?");
-            //try {
-                statement.setInt(1, getAuthorID());
-            /*} catch (RemoteException e) {
-                throw new EJBException("RemoteException", e);
-            }*/
-            statement.setInt(2, getPages());
-            statement.setInt(3, getPrice());
-            statement.setInt(4, getAmount());
-            statement.setInt(5, getIdItem());
-            statement.executeUpdate();
+            System.out.println("BookRemote bean method ejbStore()  before if");
 
+            Integer idP = propertiesId(getIdItem());
+            System.out.println("BookRemote bean method ejbStore()  before if idP="+idP);
+            if( idP != null) {
+                statement = connection.
+                        prepareStatement("UPDATE PROPERTIES SET ID_AUTHOR=?,PAGES=?,PRICE=?,AMOUNT=? WHERE ID_BOOK=?");
+                System.out.println("BookRemote bean method ejbStore() idAuthor="+getAuthorID()+" pages="+getPages()
+                        +" price="+getPrice()+" amount="+ getAmount());
+                statement.setInt(1, getAuthorID());
+                statement.setInt(2, getPages());
+                statement.setInt(3, getPrice());
+                statement.setInt(4, getAmount());
+                statement.setInt(5, idP);
+                statement.executeUpdate();
+                System.out.println("BookRemote bean method ejbStore() in if");
+            }
+            System.out.println("BookRemote bean method ejbStore() finish");
         } catch (SQLException e) {
             throw new EJBException("Can't store data due to exception", e);
         } finally {
@@ -184,26 +192,59 @@ public class BookBean extends ItemBean implements EntityBean {
     }
 
 
-    public void ejbHomeUpdateById(Integer id, String name, int author, String description, Integer rubric, int pages, int price, int amount) {
+    public void ejbHomeUpdateById(Integer id, String name, int author, String description,
+                                  Integer rubric, int pages, int price, int amount) {
         System.out.println("BookRemote bean method ejbHomeUpdateById() was called.");
 
         Connection connection = DataSourceConnection.getInstance().getConnection();
         ResultSet result = null;
         PreparedStatement statement = null;
+
         try {
-            statement = connection.prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ? AND TYPE = 0");
+            statement = connection.
+                    prepareStatement("UPDATE ITEM SET PARENT_ID=?,NAME=?,DESCRIPTION=? WHERE ID_ITEM = ? AND TYPE = 0");
             statement.setInt(1, rubric);
             statement.setString(2, name);
             statement.setString(3, description);
             statement.setInt(4, id);
             statement.executeUpdate();
-            statement = connection.prepareStatement("UPDATE PROPERTIES SET ID_AUTHOR=?,PAGES=?,PRICE=?,AMOUNT=? WHERE ID_BOOK=?");
-            statement.setInt(1, author);
-            statement.setInt(2, pages);
-            statement.setInt(3, price);
-            statement.setInt(4, amount);
-            statement.setInt(5, id);
-            statement.executeUpdate();
+
+
+            Integer idP = propertiesId(id);
+            if( idP != null) {
+                statement = connection.
+                        prepareStatement("UPDATE PROPERTIES SET ID_AUTHOR=?,PAGES=?,PRICE=?,AMOUNT=? WHERE ID_BOOK=?");
+                statement.setInt(1, author);
+                statement.setInt(2, pages);
+                statement.setInt(3, price);
+                statement.setInt(4, amount);
+                statement.setInt(5, idP);
+                statement.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new EJBException("Can't store data due to exception", e);
+        } finally {
+            DataSourceConnection.getInstance().disconnect(connection, result, statement);
+        }
+    }
+
+    private Integer propertiesId(Integer id) {
+
+        Connection connection = DataSourceConnection.getInstance().getConnection();
+        ResultSet result = null;
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.prepareStatement("SELECT ID_PROPERTIES FROM ITEM WHERE ID_ITEM=? AND TYPE=0");
+            statement.setInt(1, id);
+            result = statement.executeQuery();
+
+            if (result.next()) {
+                return result.getInt("ID_PROPERTIES");
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             throw new EJBException("Can't store data due to exception", e);
         } finally {
@@ -214,8 +255,8 @@ public class BookBean extends ItemBean implements EntityBean {
 
     public Integer ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) throws CreateException {
         System.out.println("BookRemote bean method ejbCreateBook(String name, String description, int rubricId, int authorId, int pages, int price, int amount) was called.");
-        //System.out.println("-1 name "+name+" ,des "+description+" ,rub "+rubricId+" ,aut "+authorId+" ,pag "+pages+" ,prc "+price
-        //+" ,amount "+amount);
+        System.out.println("-1 name "+name+" ,des "+description+" ,rub "+rubricId+" ,aut "+authorId+" ,pag "+pages+" ,prc "+price
+        +" ,amount "+amount);
 
         long k;
         Connection connection = DataSourceConnection.getInstance().getConnection();
@@ -223,7 +264,7 @@ public class BookBean extends ItemBean implements EntityBean {
         PreparedStatement statement = null;
 
         try {
-            statement = connection.prepareStatement("{call ADDBOOK(?,?,?,?,?,?,?)}", statement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement("{call ADDBOOK(?,?,?,?,?,?,?)}"/*, statement.RETURN_GENERATED_KEYS*/);
 
             statement.setString(1, name);
             statement.setString(2, description);
@@ -234,13 +275,20 @@ public class BookBean extends ItemBean implements EntityBean {
             statement.setInt(7, amount);
             statement.execute();
 
-            result = statement.getGeneratedKeys();
+            /*result = statement.getGeneratedKeys();
+              k = result.getLong(1);
+              this.setIdItem(toIntExact(k));
+             */
+            statement = null;
+            result = null;
 
+            statement = connection.prepareStatement("SELECT MAX(ID_ITEM) FROM  ITEM");
+            result = statement.executeQuery();
             if (result.next()) {
-                k = result.getLong(1);
-                System.out.println("Auto Generated Primary Key from resultSet k=" + k);
+                this.setIdItem(result.getInt("MAX(ID_ITEM)"));
+                System.out.println("Auto Generated Primary Key from resultSet k=" + getIdItem());
 
-                this.setIdItem(toIntExact(k));
+
                 this.setName(name);
                 this.setDescription(description);
                 this.setType(ItemType.Book);

@@ -61,7 +61,9 @@ public class OracleDataAccess implements ModelDataBase {
         }
         BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
         try {
-            home.updateById(book.getId(), book.getName(), book.getAuthor().getId(), book.getDescription(), book.getParent().getId(), book.getPages(), book.getPrice(), book.getAmount());
+            home.updateById(book.getId(), book.getName(), book.getAuthor().getId(),
+                    book.getDescription(), book.getParent().getId(), book.getPages(),
+                    book.getPrice(), book.getAmount());
         } catch (RemoteException e) {
             throw new DataBaseException("Can't update data due to RemoteException", e);
         }
@@ -661,10 +663,14 @@ public class OracleDataAccess implements ModelDataBase {
             Context initial = new InitialContext();
             Object objref = initial.lookup("BookEJB");
             BookHome home = (BookHome) PortableRemoteObject.narrow(objref, BookHome.class);
+
             bookRemote = home.findByPrimaryKey(bookId);
             Item rubric = getRubricById(bookRemote.getParentId());
             Author author = getAuthorById(bookRemote.getAuthorID());
-            book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric, author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+
+            book = new Book(bookRemote.getIdItem(), bookRemote.getName(), bookRemote.getDescription(), rubric,
+                    author, bookRemote.getPages(), bookRemote.getPrice(), bookRemote.getAmount());
+            System.out.println("getBookById "+book.getAmount()+" "+book.getPages()+" "+book.getPrice());
         } catch (Exception e) {
             throw new DataBaseException("Can't get customer by id", e);
         }

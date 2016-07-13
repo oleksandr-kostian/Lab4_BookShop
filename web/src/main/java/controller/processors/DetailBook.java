@@ -24,7 +24,7 @@ public class DetailBook implements GeneralProcess {
 
         Book book = OracleDataAccess.getInstance().getBookById(IdDetail);
         request.getSession().setAttribute(ATTRIBUTE_BOOK_FOR_DETAIL, book);
-
+        System.out.println("DetailBook "+book.getAmount()+" "+book.getPages()+" "+book.getPrice());
         Commands.forward("/bookDetail.jsp",request,response);
     }
 
